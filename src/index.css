@@ -1,0 +1,56 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #dc0475;
+  --color-background-app: #f3f4f6;
+  --color-sidebar: #000000;
+  --font-sans: "Helvetica Neue", Arial, sans-serif;
+}
+
+@layer base {
+  body {
+    @apply bg-background-app text-slate-900 antialiased;
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+nav li, button {
+  @apply select-none;
+  outline: none !important;
+}
+
+.bento-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+@media (max-width: 1024px) {
+  .bento-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .bento-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.card-bento {
+  @apply bg-white border-t-4 border-slate-200 p-4 transition-all duration-300 flex flex-col justify-between;
+  border-radius: 4px;
+}
+
+.card-bento:hover {
+  @apply border-t-primary;
+}
+
+.card-featured {
+  @apply bg-primary text-white border-none;
+}
+
+.live-badge {
+  @apply bg-red-500 text-white px-1.5 py-0.5 rounded-sm text-[9px] font-extrabold uppercase;
+}
+
