@@ -1,0 +1,10 @@
+id,name,name_vi,category,category_vi,format,format_vi,icon
+1,Chess,Cờ vua,Caro,Cờ Caro,Individual,Cá nhân,Trophy
+2,Chess,Cờ vua,Domino,Domino,Individual,Cá nhân,Grid3X3
+3,Esports,Thể thao điện tử,Audition,Audition,Individual & Team,Cá nhân & Đồng đội,Music
+4,Esports,Thể thao điện tử,FC 26,FC 26,Individual,Cá nhân,Gamepad2
+5,Esports,Thể thao điện tử,Arena of Valor,Liên Quân Mobile,Team,Đồng đội,Swords
+6,Esports,Thể thao điện tử,Mario Kart,Mario Kart,Individual,Cá nhân,Zap
+7,Badminton,Cầu lông,Mixed,Đồng đội nam nữ,Team,Đồng đội,Activity
+8,Billiards,Billiards,Pool 9 Ball,Pool 9 bi,Individual,Cá nhân,CircleDot
+9,Football,Bóng đá,Mini-Field,Bóng đá mini,Team,Đồng đội,Dribbble
