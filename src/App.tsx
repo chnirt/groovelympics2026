@@ -26,6 +26,7 @@ import {
   Calendar,
   Medal,
   Play,
+  MapPin,
 } from "lucide-react";
 import {
   SPORTS,
@@ -38,6 +39,7 @@ import { Sport, Athlete, Match, CountryMedal } from "./types";
 import { translations } from "./translations";
 import { useSports } from "./hooks/useSports";
 import { useAthletes } from "./hooks/useAthletes";
+import { useMatches } from "./hooks/useMatches";
 
 const ICON_MAP: Record<string, any> = {
   Trophy,
@@ -63,12 +65,25 @@ export default function App() {
   const [lang, setLang] = useState<Lang>("vi");
   const { data: sportsData } = useSports();
   const { data: athletesData } = useAthletes();
+  const { data: matchesData } = useMatches();
 
   const t = translations[lang];
 
+  const mySportsData = useMemo(
+    () => (sportsData.length > 0 ? sportsData : SPORTS),
+    [sportsData],
+  );
+  const myAthletesData = useMemo(
+    () => (athletesData.length > 0 ? athletesData : ATHLETES),
+    [athletesData],
+  );
+  const myMatchesData = useMemo(
+    () => (matchesData.length > 0 ? matchesData : MATCHES),
+    [matchesData],
+  );
+
   const filteredSports = useMemo(() => {
-    const myData = sportsData.length > 0 ? sportsData : SPORTS;
-    return myData.filter((sport: any) => {
+    return mySportsData.filter((sport: any) => {
       const name = lang === "vi" ? sport.name_vi : sport.name;
       const category = lang === "vi" ? sport.category_vi : sport.category;
       return (
@@ -166,13 +181,13 @@ export default function App() {
         );
       case "schedule":
         return (
-          <ScheduleView matches={MATCHES} sports={SPORTS} lang={lang} t={t} />
+          <ScheduleView matches={myMatchesData} sports={mySportsData} lang={lang} t={t} />
         );
       case "standings":
         return (
           <StandingsView
             medals={MEDALS}
-            sports={SPORTS}
+            sports={mySportsData}
             standings={SPORT_STANDINGS}
             lang={lang}
             t={t}
@@ -181,22 +196,71 @@ export default function App() {
       case "athletes":
         return (
           <AthletesView
-            athletes={athletesData.length > 0 ? athletesData : ATHLETES}
-            sports={SPORTS}
+            athletes={myAthletesData}
+            sports={mySportsData}
             lang={lang}
             t={t}
             searchQuery={athleteSearchQuery}
           />
         );
       case "venues":
+        const sportsWithVenues = mySportsData.filter((s: any) => s.location);
         return (
-          <div className="p-12 text-center bg-white rounded-lg border border-slate-100 shadow-sm border-t-4 border-primary">
-            <h3 className="text-xl font-bold uppercase tracking-tighter mb-4">
-              {t.venuesTitle}
-            </h3>
-            <p className="text-slate-500 font-medium max-w-md mx-auto">
-              Hanoi National Stadium • Quan Ngua Gymnasium • Trinh Hoai Duc Hall
-            </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {sportsWithVenues.map((s) => (
+              <div
+                key={s.id}
+                className="bg-white p-8 rounded-sm border-t-4 border-primary shadow-sm group"
+              >
+                <div className="flex items-center gap-4 mb-6">
+                  <div className="w-12 h-12 bg-slate-900 text-white rounded-sm flex items-center justify-center group-hover:bg-primary transition-colors">
+                    {(() => {
+                      const Icon = ICON_MAP[s.icon] || MapPin;
+                      return <Icon size={24} />;
+                    })()}
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-black uppercase tracking-[0.3em] text-primary mb-1">
+                      {lang === "vi" ? s.name_vi : s.name}
+                    </p>
+                    <h3 className="text-2xl font-black uppercase tracking-tighter leading-none">
+                      {lang === "vi" ? s.category_vi : s.category}
+                    </h3>
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <div className="flex items-start gap-3">
+                    <MapPin className="text-primary mt-1 shrink-0" size={18} />
+                    <p className="text-lg font-bold text-slate-700 leading-tight uppercase tracking-tight">
+                      {lang === "vi" ? s.location_vi : s.location}
+                    </p>
+                  </div>
+                  <div className="p-4 bg-slate-50 border border-slate-100 rounded-sm">
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">
+                      {lang === "vi" ? "Dành cho" : "Venue for"}
+                    </p>
+                    <p className="text-sm font-bold text-slate-600 italic">
+                      {lang === "vi"
+                        ? `Giải đấu ${s.category_vi} chính thức tại Groovelympics 2026.`
+                        : `Official ${s.category} tournament at Groovelympics 2026.`}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            ))}
+            {sportsWithVenues.length === 0 && (
+              <div className="col-span-2 p-12 text-center bg-white rounded-lg border border-slate-100 shadow-sm border-t-4 border-primary">
+                <h3 className="text-xl font-bold uppercase tracking-tighter mb-4">
+                  {t.venuesTitle}
+                </h3>
+                <p className="text-slate-500 font-medium max-w-md mx-auto">
+                  {lang === "vi"
+                    ? "Thông tin địa điểm đang được cập nhật..."
+                    : "Venue information is being updated..."}
+                </p>
+              </div>
+            )}
           </div>
         );
       default:
@@ -513,12 +577,12 @@ export default function App() {
                     </div>
                     <div className="bg-slate-50 p-4 rounded-sm border-t-2 border-slate-200">
                       <p className="text-[9px] font-bold text-black/30 uppercase tracking-widest mb-1">
-                        {lang === "vi" ? "Loại" : "Sport Type"}
+                        {lang === "vi" ? "Sân đấu" : "Venue"}
                       </p>
                       <p className="text-xs font-black uppercase text-slate-700">
                         {lang === "vi"
-                          ? selectedSport.name_vi
-                          : selectedSport.name}
+                          ? selectedSport.location_vi || "TBD"
+                          : selectedSport.location || "TBD"}
                       </p>
                     </div>
                   </div>
@@ -796,6 +860,28 @@ function ScheduleView({
                                     </span>
                                   </div>
                                 )}
+                                <div className="lg:hidden flex items-center gap-1 mt-1 opacity-40">
+                                  {matchSport?.location && (
+                                    <>
+                                      <MapPin size={8} />
+                                      <span className="text-[7px] font-black uppercase tracking-tighter">
+                                        {lang === "vi"
+                                          ? matchSport.location_vi?.includes(
+                                              ":",
+                                            )
+                                            ? matchSport.location_vi
+                                                .split(":")[1]
+                                                .trim()
+                                            : matchSport.location_vi
+                                          : matchSport.location?.includes(":")
+                                            ? matchSport.location
+                                                .split(":")[1]
+                                                .trim()
+                                            : matchSport.location}
+                                      </span>
+                                    </>
+                                  )}
+                                </div>
                               </div>
 
                               <div className="min-w-0 text-left">
@@ -834,6 +920,17 @@ function ScheduleView({
                                   className={`text-[9px] font-black uppercase tracking-[0.15em] ${match.status === "live" ? "text-primary" : "text-slate-400"}`}
                                 >
                                   {match.stage}
+                                </span>
+                              </div>
+                              <div className="flex items-start gap-2 mb-4">
+                                <MapPin
+                                  size={12}
+                                  className="text-slate-300 mt-0.5 shrink-0"
+                                />
+                                <span className="text-[9px] font-bold text-slate-500 uppercase leading-tight tracking-tight">
+                                  {lang === "vi"
+                                    ? matchSport?.location_vi || "Địa điểm TBD"
+                                    : matchSport?.location || "Venue TBD"}
                                 </span>
                               </div>
                               <button

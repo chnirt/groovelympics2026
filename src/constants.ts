@@ -97,6 +97,8 @@ export const SPORTS: Sport[] = [
     description_vi: "Đoàn kết để chiến thắng!\nSức mạnh tập thể! Lấy cảm hứng từ Sudirman Cup, nội dung đồng đội hỗn hợp gồm 5 trận đấu: Đơn nam, Đơn nữ, Đôi nam nữ, Đôi nữ và Đôi nam. Hãy cống hiến những cú đập cầu uy lực nhất để giành vinh quang cho đội!",
     rules: "League",
     rules_vi: "Vòng bảng tính điểm",
+    location: "Badminton Court: 26 Luong Dinh Cua, An Khanh",
+    location_vi: "Sân cầu lông: 26 Lương Định Của, An Khánh",
     icon: "Activity"
   },
   {
@@ -125,6 +127,8 @@ export const SPORTS: Sport[] = [
     description_vi: "Tốc độ và sức mạnh!\nxỏ giày vào sân cho môn thể thao vua phiên bản 5 người! Giải đấu bóng đá mini đòi hỏi sự linh hoạt, kiểm soát bóng tốt và tinh thần đồng đội nỗ lực. Từ những pha phản công thần tốc đến lối phòng ngự vững chãi, mỗi giây trên sân đều quý giá. Hãy dẫn dắt đội bóng của bạn tới cúp vô địch Groovelympics!",
     rules: "League\nFinal Round",
     rules_vi: "Vòng bảng tính điểm\nVòng chung kết",
+    location: "Football Pitch: 516 Pham Van Dong, Binh Loi Trung",
+    location_vi: "Sân bóng đá: 516 Phạm Văn Đồng, Bình Lợi Trung",
     icon: "Dribbble"
   }
 ];

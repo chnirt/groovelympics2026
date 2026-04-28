@@ -10,6 +10,8 @@ export interface Sport {
   description_vi: string;
   rules: string;
   rules_vi: string;
+  location?: string;
+  location_vi?: string;
   note?: string;
   icon: string;
 }
@@ -29,7 +31,7 @@ export interface Match {
   teamB: string;
   scoreA?: number | string;
   scoreB?: number | string;
-  status: 'upcoming' | 'live' | 'finished';
+  status: "upcoming" | "live" | "finished";
   timestamp: string;
   stage: string;
 }
