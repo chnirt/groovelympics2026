@@ -1,12 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { API_URL } from "./useSports";
 
-export const API_URL =
-  "https://script.google.com/macros/s/AKfycbxz6vtExaE9F35wruj0zRznSRCgykYSy1Y50NDqRdmj2ZpSfpIoFPcMyoMfFiwAzvGT/exec";
-const SPORTS_API_URL = `${API_URL}?type=sports`;
+const MEDALS_API_URL = `${API_URL}?type=medals`;
 
-export function useSports() {
+export function useMedals() {
   const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -16,7 +15,7 @@ export function useSports() {
 
     const fetchData = async () => {
       try {
-        const res = await fetch(SPORTS_API_URL);
+        const res = await fetch(MEDALS_API_URL);
         const json = await res.json();
 
         if (!mounted) return;

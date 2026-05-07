@@ -17,15 +17,10 @@ import {
   Dribbble,
   Menu,
   X,
-  ChevronRight,
   Info,
-  Users,
   User as UserIcon,
   Search,
   ArrowRight,
-  Calendar,
-  Medal,
-  Play,
   MapPin,
 } from "lucide-react";
 import {
@@ -40,6 +35,7 @@ import { translations } from "./translations";
 import { useSports } from "./hooks/useSports";
 import { useAthletes } from "./hooks/useAthletes";
 import { useMatches } from "./hooks/useMatches";
+import { useMedals } from "./hooks/useMedals";
 
 const ICON_MAP: Record<string, any> = {
   Trophy,
@@ -72,6 +68,7 @@ export default function App() {
   const { data: sportsData } = useSports();
   const { data: athletesData } = useAthletes();
   const { data: matchesData } = useMatches();
+  const { data: medalsData } = useMedals();
 
   const t = translations[lang];
 
@@ -86,6 +83,10 @@ export default function App() {
   const myMatchesData = useMemo(
     () => (matchesData.length > 0 ? matchesData : MATCHES),
     [matchesData],
+  );
+  const myMedalsData = useMemo(
+    () => (medalsData.length > 0 ? medalsData : MEDALS),
+    [medalsData],
   );
 
   const filteredSports = useMemo(() => {
@@ -208,7 +209,7 @@ export default function App() {
       case "standings":
         return (
           <StandingsView
-            medals={MEDALS}
+            medals={myMedalsData}
             sports={mySportsData}
             standings={SPORT_STANDINGS}
             lang={lang}
@@ -787,6 +788,7 @@ function ScheduleView({
 
                   <div className="grid grid-cols-1 gap-4 items-stretch">
                     {dayMatches.map((match) => {
+                      console.log("🚀 ~ ScheduleView ~ match:", match);
                       const matchSport = sports.find(
                         (s) => s.id === match.sportId,
                       );
@@ -885,9 +887,9 @@ function ScheduleView({
                                 <p
                                   className={`text-[8px] font-black uppercase tracking-[0.15em] opacity-40 text-slate-500`}
                                 >
-                                  {match.countryA || lang === "vi"
-                                    ? "Quốc gia"
-                                    : "COUNTRY"}
+                                  {lang === "vi"
+                                    ? match.countryA || "Quốc gia"
+                                    : match.countryA || "COUNTRY"}
                                 </p>
                               </div>
 
@@ -960,9 +962,9 @@ function ScheduleView({
                                 <p
                                   className={`text-[8px] font-black uppercase tracking-[0.15em] opacity-40 text-slate-500`}
                                 >
-                                  {match.countryB || lang === "vi"
-                                    ? "Quốc gia"
-                                    : "COUNTRY"}
+                                  {lang === "vi"
+                                    ? match.countryB || "Quốc gia"
+                                    : match.countryB || "COUNTRY"}
                                 </p>
                               </div>
                             </div>
