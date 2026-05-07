@@ -181,7 +181,12 @@ export default function App() {
         );
       case "schedule":
         return (
-          <ScheduleView matches={myMatchesData} sports={mySportsData} lang={lang} t={t} />
+          <ScheduleView
+            matches={myMatchesData}
+            sports={mySportsData}
+            lang={lang}
+            t={t}
+          />
         );
       case "standings":
         return (
@@ -610,6 +615,38 @@ export default function App() {
                         ))}
                     </div>
                   </section>
+
+                  {(lang === "vi"
+                    ? selectedSport.format_detailed_vi
+                    : selectedSport.format_detailed) && (
+                    <section>
+                      <h4 className="text-[10px] font-black text-black/30 uppercase tracking-[0.2em] mb-3">
+                        {t.formatDetailed}
+                      </h4>
+                      <p className="text-sm text-slate-700 font-medium leading-relaxed whitespace-pre-line bg-slate-50 p-5 border-l-4 border-primary">
+                        {lang === "vi"
+                          ? selectedSport.format_detailed_vi
+                          : selectedSport.format_detailed}
+                      </p>
+                    </section>
+                  )}
+
+                  {(lang === "vi"
+                    ? selectedSport.regulations_vi
+                    : selectedSport.regulations) && (
+                    <section>
+                      <h4 className="text-[10px] font-black text-black/30 uppercase tracking-[0.2em] mb-3">
+                        {t.regulations}
+                      </h4>
+                      <div className="bg-slate-900 text-white p-5 rounded-sm">
+                        <p className="text-sm font-medium leading-relaxed whitespace-pre-line opacity-90">
+                          {lang === "vi"
+                            ? selectedSport.regulations_vi
+                            : selectedSport.regulations}
+                        </p>
+                      </div>
+                    </section>
+                  )}
                 </div>
               </div>
             </motion.div>
@@ -1205,11 +1242,17 @@ function AthletesView({
 }) {
   const [filter, setFilter] = useState<number | "all">("all");
 
-  const filteredAthletes = athletes.filter(
-    (a) =>
-      (filter === "all" || a.sportId === filter) &&
-      a.name.toLowerCase().includes(searchQuery.toLowerCase()),
-  );
+  const filteredAthletes = athletes.filter((a) => {
+    const sportIdArray = a.sportIds;
+
+    const isIncluded =
+      typeof filter === "number" && sportIdArray.includes(filter);
+
+    return (
+      (filter === "all" || isIncluded) &&
+      a.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  });
 
   return (
     <div className="space-y-4 lg:space-y-6">
@@ -1255,7 +1298,9 @@ function AthletesView({
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5"
         >
           {filteredAthletes.map((athlete) => {
-            const sport = sports.find((s) => s.id === athlete.sportId);
+            const athleteSports = sports.filter((s) =>
+              athlete.sportIds.includes(s.id),
+            );
             return (
               <motion.div
                 layout
@@ -1274,9 +1319,16 @@ function AthletesView({
                     <UserIcon size={24} />
                   )}
                 </div>
-                <p className="text-[10px] font-black text-primary uppercase tracking-[0.2em] mb-2">
-                  {sport?.name} • {sport?.category}
-                </p>
+                <div className="flex flex-wrap gap-1 mb-2">
+                  {athleteSports.map((s, idx) => (
+                    <span
+                      key={s.id}
+                      className="text-[8px] font-black text-primary uppercase tracking-[0.1em] bg-primary/5 px-2 py-0.5 rounded-full"
+                    >
+                      {lang === "vi" ? s.category_vi : s.category}
+                    </span>
+                  ))}
+                </div>
                 <h4 className="text-xl font-extrabold uppercase tracking-tighter leading-none mb-4 group-hover:translate-x-1 transition-transform">
                   {athlete.name}
                 </h4>

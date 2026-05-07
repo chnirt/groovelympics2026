@@ -6,10 +6,14 @@ export interface Sport {
   category_vi: string;
   format: string;
   format_vi: string;
+  format_detailed?: string;
+  format_detailed_vi?: string;
   description: string;
   description_vi: string;
   rules: string;
   rules_vi: string;
+  regulations?: string;
+  regulations_vi?: string;
   location?: string;
   location_vi?: string;
   note?: string;
@@ -20,7 +24,7 @@ export interface Athlete {
   id: string;
   name: string;
   country: string; // Representing teams/countries
-  sportId: number;
+  sportIds: number[];
   image?: string;
 }
 
