@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 
 export const API_URL =
-  "https://script.google.com/macros/s/AKfycbwVOzUEtIRWTuV8uBlQWR8K2-fbCiLLHbjiDnOKxfMZvFkvTnEGDnTeUiWlWBLl9ySZ/exec";
+  "https://script.google.com/macros/s/AKfycbw_elvIfzOKLFMy483pQD4HwOWjuUFjyTZ1tQJXKcOAFIwEoW6cBd9qnakrhb1aFr7I/exec";
 const SPORTS_API_URL = `${API_URL}?type=sports`;
 
 export function useSports() {
