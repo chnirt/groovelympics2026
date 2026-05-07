@@ -53,7 +53,13 @@ const ICON_MAP: Record<string, any> = {
   Dribbble,
 };
 
-type View = "sports" | "schedule" | "standings" | "athletes" | "venues";
+type View =
+  | "sports"
+  | "schedule"
+  | "results"
+  | "standings"
+  | "athletes"
+  | "venues";
 type Lang = "en" | "vi";
 
 export default function App() {
@@ -101,6 +107,7 @@ export default function App() {
   const navItems: { id: View; label: string }[] = [
     { id: "sports", label: t.program },
     { id: "schedule", label: t.events },
+    { id: "results", label: t.results },
     { id: "standings", label: t.standings },
     { id: "athletes", label: t.athletes },
     { id: "venues", label: t.venues },
@@ -186,6 +193,16 @@ export default function App() {
             sports={mySportsData}
             lang={lang}
             t={t}
+          />
+        );
+      case "results":
+        return (
+          <ScheduleView
+            matches={MATCHES.filter((m) => m.status === "finished")}
+            sports={SPORTS}
+            lang={lang}
+            t={t}
+            isResults
           />
         );
       case "standings":
@@ -681,11 +698,13 @@ function ScheduleView({
   sports,
   lang,
   t,
+  isResults = false,
 }: {
   matches: Match[];
   sports: Sport[];
   lang: Lang;
   t: any;
+  isResults?: boolean;
 }) {
   const [filter, setFilter] = useState<number | "all">("all");
 
@@ -723,7 +742,11 @@ function ScheduleView({
             }
           `}
         >
-          {t.allEvents}
+          {isResults
+            ? lang === "vi"
+              ? "Tất cả kết quả"
+              : "All Results"
+            : t.allEvents}
         </button>
         {sports.map((s) => (
           <button
@@ -744,7 +767,7 @@ function ScheduleView({
 
       <AnimatePresence mode="wait">
         <motion.div
-          key={filter}
+          key={`${filter}-${isResults}`}
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -10 }}
@@ -762,22 +785,22 @@ function ScheduleView({
                     <div className="flex-1 h-[1px] bg-slate-200 ml-4 opacity-30" />
                   </div>
 
-                  <div className="grid grid-cols-1 gap-4">
+                  <div className="grid grid-cols-1 gap-4 items-stretch">
                     {dayMatches.map((match) => {
                       const matchSport = sports.find(
                         (s) => s.id === match.sportId,
                       );
                       const isWinningA =
                         match.status === "finished" &&
-                        match.scoreA > match.scoreB;
+                        Number(match.scoreA) > Number(match.scoreB);
                       const isWinningB =
                         match.status === "finished" &&
-                        match.scoreB > match.scoreA;
+                        Number(match.scoreB) > Number(match.scoreA);
 
                       return (
                         <div
                           key={match.id}
-                          className={`relative overflow-hidden transition-all duration-300 group
+                          className={`relative overflow-hidden transition-all duration-300 group flex flex-col h-full
                         ${
                           match.status === "live"
                             ? "bg-white ring-2 ring-primary shadow-xl z-10"
@@ -848,19 +871,23 @@ function ScheduleView({
 
                             {/* Middle: Teams & Score */}
                             <div className="p-5 sm:p-7 grid grid-cols-[1fr_auto_1fr] items-center gap-4 sm:gap-8 md:gap-10 relative">
-                              <div className="min-w-0 text-right">
-                                <h4
-                                  className={`text-base sm:text-2xl font-black uppercase tracking-tighter truncate leading-none mb-1
-                              text-slate-900
-                              ${isWinningA || match.status === "live" ? "text-primary" : ""}
-                            `}
-                                >
-                                  {match.teamA}
-                                </h4>
+                              <div className="min-w-0 flex flex-col items-end">
+                                <div className="flex items-center gap-2 mb-1 justify-end w-full">
+                                  <h4
+                                    className={`text-base sm:text-2xl font-black uppercase tracking-tighter truncate leading-none
+                                text-slate-900
+                                ${isWinningA || match.status === "live" ? "text-primary" : ""}
+                              `}
+                                  >
+                                    {match.teamA}
+                                  </h4>
+                                </div>
                                 <p
                                   className={`text-[8px] font-black uppercase tracking-[0.15em] opacity-40 text-slate-500`}
                                 >
-                                  {lang === "vi" ? "Sân Nhà" : "HOME"}
+                                  {match.countryA || lang === "vi"
+                                    ? "Quốc gia"
+                                    : "COUNTRY"}
                                 </p>
                               </div>
 
@@ -933,7 +960,9 @@ function ScheduleView({
                                 <p
                                   className={`text-[8px] font-black uppercase tracking-[0.15em] opacity-40 text-slate-500`}
                                 >
-                                  {lang === "vi" ? "Sân Khách" : "AWAY"}
+                                  {match.countryB || lang === "vi"
+                                    ? "Quốc gia"
+                                    : "COUNTRY"}
                                 </p>
                               </div>
                             </div>
@@ -959,7 +988,7 @@ function ScheduleView({
                                   {match.stage}
                                 </span>
                               </div>
-                              <div className="flex items-start gap-2 mb-4">
+                              <div className="flex items-start gap-2">
                                 <MapPin
                                   size={12}
                                   className="text-slate-300 mt-0.5 shrink-0"
@@ -970,17 +999,6 @@ function ScheduleView({
                                     : matchSport?.location || "Venue TBD"}
                                 </span>
                               </div>
-                              <button
-                                className={`text-[8px] font-black uppercase tracking-widest border py-2.5 px-5 transition-all
-                             ${
-                               match.status === "live"
-                                 ? "bg-primary border-primary text-white hover:bg-slate-900 hover:border-slate-900"
-                                 : "bg-white border-slate-200 text-slate-400 hover:border-slate-900 hover:text-slate-900"
-                             }
-                           `}
-                              >
-                                {lang === "vi" ? "CHI TIẾT" : "DETAILS"}
-                              </button>
                             </div>
                           </div>
                         </div>
@@ -994,7 +1012,11 @@ function ScheduleView({
             <div className="p-20 text-center bg-white rounded border-2 border-dashed border-slate-100">
               <Trophy size={48} className="mx-auto text-slate-200 mb-6" />
               <p className="text-slate-400 font-black uppercase tracking-[0.3em] text-xs">
-                {t.noScheduled}
+                {isResults
+                  ? lang === "vi"
+                    ? "Chưa có kết quả"
+                    : "No results found"
+                  : t.noScheduled}
               </p>
             </div>
           )}

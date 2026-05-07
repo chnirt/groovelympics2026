@@ -33,6 +33,8 @@ export interface Match {
   sportId: number;
   teamA: string;
   teamB: string;
+  countryA?: string;
+  countryB?: string;
   scoreA?: number | string;
   scoreB?: number | string;
   status: "upcoming" | "live" | "finished";
