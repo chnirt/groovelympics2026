@@ -906,7 +906,9 @@ function ScheduleView({
                                   <span
                                     className={`text-2xl sm:text-4xl ${isWinningA || match.status === "live" ? "text-white underline decoration-2" : ""}`}
                                   >
-                                    {match.scoreA}
+                                    {typeof match.scoreA === "number"
+                                      ? match.scoreA
+                                      : "-"}
                                   </span>
                                   <span className="opacity-20 text-lg sm:text-2xl not-italic">
                                     :
@@ -914,7 +916,9 @@ function ScheduleView({
                                   <span
                                     className={`text-2xl sm:text-4xl ${isWinningB || match.status === "live" ? "text-white underline decoration-2" : ""}`}
                                   >
-                                    {match.scoreB}
+                                    {typeof match.scoreB === "number"
+                                      ? match.scoreB
+                                      : "-"}
                                   </span>
                                 </div>
                                 {match.status === "live" && (

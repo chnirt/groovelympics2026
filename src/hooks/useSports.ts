@@ -1,9 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { API_URL } from "../constants/index";
 
-export const API_URL =
-  "https://script.google.com/macros/s/AKfycbxz6vtExaE9F35wruj0zRznSRCgykYSy1Y50NDqRdmj2ZpSfpIoFPcMyoMfFiwAzvGT/exec";
 const SPORTS_API_URL = `${API_URL}?type=sports`;
 
 export function useSports() {

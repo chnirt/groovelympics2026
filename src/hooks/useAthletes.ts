@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { API_URL } from "./useSports";
+import { API_URL } from "../constants/index";
 
 const ATHLETES_API_URL = `${API_URL}?type=athletes`;
 

@@ -1,12 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { API_URL } from "./useSports";
+import { API_URL } from "../constants/index";
 
 const ATHLETES_API_URL = `${API_URL}?type=matches`;
 
 export function useMatches() {
   const [data, setData] = useState<any[]>([]);
+  console.log("🚀 ~ useMatches ~ data:", data)
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
