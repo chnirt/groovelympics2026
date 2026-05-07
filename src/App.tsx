@@ -1046,7 +1046,9 @@ function StandingsView({
   t: any;
 }) {
   const [tab, setTab] = useState<"overall" | "sport">("overall");
-  const [selectedSportId, setSelectedSportId] = useState<number>(9); // Default to football
+  const [selectedSportId, setSelectedSportId] = useState<number>(
+    import.meta.env.DEV ? 9 : 0,
+  ); // Default to football
 
   return (
     <div className="space-y-4 lg:space-y-6">
@@ -1120,12 +1122,12 @@ function StandingsView({
                         key={m.country}
                         className="border-b border-slate-100 hover:bg-slate-50 transition-colors group"
                       >
-                        <td className="p-3 sm:p-4 font-black text-slate-300 text-lg font-mono">
+                        <td className="p-3 sm:p-4 font-black text-slate-800 text-lg font-mono">
                           {(i + 1).toString().padStart(2, "0")}
                         </td>
                         <td className="p-3 sm:p-4">
                           <div className="flex items-center gap-2 sm:gap-3">
-                            <div className="w-8 h-5 bg-slate-100 rounded-sm border border-slate-200 shrink-0" />
+                            {/* <div className="w-8 h-5 bg-slate-100 rounded-sm border border-slate-200 shrink-0" /> */}
                             <span className="font-bold uppercase tracking-tight text-slate-800 text-sm sm:text-base">
                               {m.country}
                             </span>
@@ -1206,8 +1208,11 @@ function StandingsView({
                       <th className="p-4 text-[9px] font-black uppercase tracking-[0.2em] text-slate-400">
                         {lang === "vi" ? "Đội / VĐV" : "Team / Player"}
                       </th>
-                      <th className="p-4 text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 text-center w-24">
+                      <th className="p-4 text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 text-center w-20">
                         {t.played}
+                      </th>
+                      <th className="p-4 text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 text-center w-20">
+                        {t.difference}
                       </th>
                       <th className="p-4 text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 text-center w-24">
                         {t.points}
@@ -1236,9 +1241,22 @@ function StandingsView({
                           <td className="p-4 text-center font-bold text-slate-500">
                             {s.played}
                           </td>
+                          <td className="p-4 text-center font-bold text-slate-500 font-mono">
+                            <span
+                              className={
+                                s.diff > 0
+                                  ? "text-green-600"
+                                  : s.diff < 0
+                                    ? "text-red-500"
+                                    : "text-slate-400"
+                              }
+                            >
+                              {s.diff > 0 ? `+${s.diff}` : s.diff}
+                            </span>
+                          </td>
                           <td className="p-4 text-center">
                             <span className="inline-flex items-center justify-center px-3 py-1 bg-primary text-white font-black text-xs italic tracking-tighter">
-                              {s.points} PTS
+                              {s.points} {t.pts}
                             </span>
                           </td>
                         </tr>
@@ -1362,7 +1380,7 @@ function AthletesView({
                 </h4>
                 <div className="flex items-center justify-between border-t border-slate-100 pt-4">
                   <div className="flex items-center gap-2">
-                    <div className="w-6 h-4 bg-slate-100 rounded-sm border border-slate-200" />
+                    {/* <div className="w-6 h-4 bg-slate-100 rounded-sm border border-slate-200" /> */}
                     <span className="text-xs font-black text-slate-500 uppercase tracking-widest">
                       {athlete.country}
                     </span>

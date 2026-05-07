@@ -24,6 +24,8 @@ export const translations = {
     total: "Total",
     played: "Played",
     points: "Points",
+    difference: "Diff",
+    pts: "PTS",
     allEvents: "All Events",
     liveScore: "Live Score",
     startTime: "Start Time",
@@ -58,6 +60,8 @@ export const translations = {
     total: "Tổng",
     played: "Số trận",
     points: "Điểm",
+    difference: "Hiệu số",
+    pts: "ĐIỂM",
     allEvents: "Tất cả trận đấu",
     liveScore: "Tỷ số",
     startTime: "Thời gian",
@@ -66,5 +70,5 @@ export const translations = {
     venuesTitle: "Địa điểm chính thức",
     info: "Thông tin",
     portalDesc: "Cổng thông tin chính thức Groovelympics 2026.",
-  }
+  },
 };
