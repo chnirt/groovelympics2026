@@ -162,7 +162,7 @@ export default function App() {
 
                       <div className="flex justify-between items-end mt-4">
                         <div className="flex flex-wrap gap-1.5 flex-1 mr-4">
-                          {sRules.split("\n").map((rule, i) => (
+                          {sRules.split("\n").map((rule: string, i: number) => (
                             <span
                               key={i}
                               className={`inline-block px-2 py-0.5 rounded-sm text-[8px] font-black uppercase tracking-widest ${(featured && sport.name === "Football") || (featured && sport.name === "Badminton") ? "bg-white/20 text-white" : "bg-black/5 text-slate-500"}`}
@@ -190,7 +190,7 @@ export default function App() {
       case "schedule":
         return (
           <ScheduleView
-            matches={myMatchesData}
+            matches={myMatchesData.filter((m) => m.status !== "finished")}
             sports={mySportsData}
             lang={lang}
             t={t}
@@ -199,8 +199,8 @@ export default function App() {
       case "results":
         return (
           <ScheduleView
-            matches={MATCHES.filter((m) => m.status === "finished")}
-            sports={SPORTS}
+            matches={myMatchesData.filter((m) => m.status === "finished")}
+            sports={mySportsData}
             lang={lang}
             t={t}
             isResults
@@ -610,7 +610,7 @@ export default function App() {
                     </div>
                   </div>
 
-                  <section>
+                  {/* <section>
                     <h4 className="text-[10px] font-black text-black/30 uppercase tracking-[0.2em] mb-4">
                       {t.rules}
                     </h4>
@@ -632,7 +632,7 @@ export default function App() {
                           </div>
                         ))}
                     </div>
-                  </section>
+                  </section> */}
 
                   {(lang === "vi"
                     ? selectedSport.format_detailed_vi
