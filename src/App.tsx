@@ -875,7 +875,7 @@ function ScheduleView({
                               <div className="min-w-0 flex flex-col items-end">
                                 <div className="flex items-center gap-2 mb-1 justify-end w-full">
                                   <h4
-                                    className={`text-base sm:text-2xl font-black uppercase tracking-tighter leading-none text-center
+                                    className={`text-base sm:text-2xl font-black uppercase tracking-tighter lg:truncate  leading-none
                                 text-slate-900
                                 ${isWinningA || match.status === "live" ? "text-primary" : ""}
                               `}
@@ -955,7 +955,7 @@ function ScheduleView({
 
                               <div className="min-w-0 text-left">
                                 <h4
-                                  className={`text-base sm:text-2xl font-black uppercase tracking-tighter leading-none text-center mb-1
+                                  className={`text-base sm:text-2xl font-black uppercase tracking-tighter lg:truncate leading-none mb-1
                               text-slate-900
                               ${isWinningB || match.status === "live" ? "text-primary" : ""}
                             `}
