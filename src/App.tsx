@@ -1045,9 +1045,10 @@ function StandingsView({
   t: any;
 }) {
   const [tab, setTab] = useState<"overall" | "sport">("overall");
-  const [selectedSportId, setSelectedSportId] = useState<number>(
-    import.meta.env.DEV ? 9 : 0,
-  ); // Default to football
+  const [selectedSportId, setSelectedSportId] = useState<number>(() => {
+    const sportIds = Object.keys(standings).map(Number);
+    return sportIds.length > 0 ? sportIds[0] : 1;
+  });
 
   return (
     <div className="space-y-4 lg:space-y-6">
@@ -1121,7 +1122,7 @@ function StandingsView({
                         key={m.country}
                         className="border-b border-slate-100 hover:bg-slate-50 transition-colors group"
                       >
-                        <td className="p-3 sm:p-4 font-black text-slate-800 text-lg font-mono">
+                        <td className="p-3 sm:p-4 font-black text-slate-300 text-lg font-mono">
                           {(i + 1).toString().padStart(2, "0")}
                         </td>
                         <td className="p-3 sm:p-4">
@@ -1157,7 +1158,7 @@ function StandingsView({
             </div>
           ) : (
             <div className="space-y-4 lg:space-y-6 min-h-[400px]">
-              <div className="flex gap-2 overflow-x-auto pb-2 mb-2 custom-scrollbar relative ">
+              <div className="flex gap-2 overflow-x-auto pb-2 mb-2 custom-scrollbar relative">
                 {sports
                   .filter((s) => standings[s.id])
                   .map((s) => (
@@ -1182,87 +1183,181 @@ function StandingsView({
                   ))}
               </div>
 
-              <div className="bg-white rounded-sm border-t-4 border-slate-200 overflow-hidden shadow-sm flex flex-col">
-                <div className="p-5 bg-slate-50 border-b border-slate-200 flex justify-between items-center h-16 shrink-0">
-                  <h4 className="text-xs font-black uppercase tracking-widest text-slate-500 truncate mr-4">
-                    {lang === "vi"
-                      ? sports.find((s) => s.id === selectedSportId)?.name_vi
-                      : sports.find((s) => s.id === selectedSportId)?.name}{" "}
-                    •{" "}
-                    {lang === "vi"
-                      ? sports.find((s) => s.id === selectedSportId)
-                          ?.category_vi
-                      : sports.find((s) => s.id === selectedSportId)?.category}
-                  </h4>
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest whitespace-nowrap">
-                    {lang === "vi" ? "BXH Vòng bảng" : "Group Standings"}
-                  </span>
-                </div>
-                <table className="w-full text-left border-collapse table-fixed">
-                  <thead>
-                    <tr className="bg-white border-b border-slate-100">
-                      <th className="p-4 text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 w-16">
-                        {t.rank}
-                      </th>
-                      <th className="p-4 text-[9px] font-black uppercase tracking-[0.2em] text-slate-400">
-                        {lang === "vi" ? "Đội / VĐV" : "Team / Player"}
-                      </th>
-                      <th className="p-4 text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 text-center w-20">
-                        {t.played}
-                      </th>
-                      <th className="p-4 text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 text-center w-20">
-                        {t.difference}
-                      </th>
-                      <th className="p-4 text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 text-center w-24">
-                        {t.points}
-                      </th>
-                    </tr>
-                  </thead>
-                  <AnimatePresence mode="wait">
-                    <motion.tbody
-                      key={selectedSportId}
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.2 }}
-                    >
-                      {standings[selectedSportId]?.map((s, i) => (
-                        <tr
-                          key={s.team}
-                          className="border-b border-slate-50 hover:bg-slate-50 transition-colors"
-                        >
-                          <td className="p-4 font-black text-slate-800 font-mono italic">
-                            {(i + 1).toString()}
-                          </td>
-                          <td className="p-4 font-bold uppercase tracking-tight text-slate-700 text-sm">
-                            {s.team}
-                          </td>
-                          <td className="p-4 text-center font-bold text-slate-500">
-                            {s.played}
-                          </td>
-                          <td className="p-4 text-center font-bold text-slate-500 font-mono">
-                            <span
-                              className={
-                                s.diff > 0
-                                  ? "text-green-600"
-                                  : s.diff < 0
-                                    ? "text-red-500"
-                                    : "text-slate-400"
-                              }
-                            >
-                              {s.diff > 0 ? `+${s.diff}` : s.diff}
-                            </span>
-                          </td>
-                          <td className="p-4 text-center">
-                            <span className="inline-flex items-center justify-center px-3 py-1 bg-primary text-white font-black text-xs italic tracking-tighter">
-                              {s.points} {t.pts}
-                            </span>
-                          </td>
-                        </tr>
-                      ))}
-                    </motion.tbody>
-                  </AnimatePresence>
-                </table>
+              <div className="space-y-8">
+                {(() => {
+                  const sportStandings = standings[selectedSportId];
+                  const hasGroups =
+                    sportStandings &&
+                    sportStandings.length > 0 &&
+                    "group" in sportStandings[0];
+
+                  if (hasGroups) {
+                    return sportStandings.map((groupData: any) => (
+                      <div
+                        key={groupData.group}
+                        className="bg-white rounded-sm border-t-4 border-slate-200 overflow-hidden shadow-sm flex flex-col"
+                      >
+                        <div className="p-5 bg-slate-50 border-b border-slate-200 flex justify-between items-center h-16 shrink-0">
+                          <h4 className="text-xs font-black uppercase tracking-widest text-slate-500 truncate mr-4">
+                            {lang === "vi"
+                              ? groupData.group_vi
+                              : groupData.group}
+                          </h4>
+                          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest whitespace-nowrap">
+                            {lang === "vi"
+                              ? "BXH Vòng bảng"
+                              : "Group Standings"}
+                          </span>
+                        </div>
+                        <table className="w-full text-left border-collapse table-fixed">
+                          <thead>
+                            <tr className="bg-white border-b border-slate-100">
+                              <th className="p-4 text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 w-16">
+                                {t.rank}
+                              </th>
+                              <th className="p-4 text-[9px] font-black uppercase tracking-[0.2em] text-slate-400">
+                                {lang === "vi" ? "Đội / VĐV" : "Team / Player"}
+                              </th>
+                              <th className="p-4 text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 text-center w-20">
+                                {t.played}
+                              </th>
+                              <th className="p-4 text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 text-center w-20">
+                                {t.difference}
+                              </th>
+                              <th className="p-4 text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 text-center w-24">
+                                {t.points}
+                              </th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {groupData.rankings.map((s: any, i: number) => (
+                              <tr
+                                key={s.team}
+                                className="border-b border-slate-50 hover:bg-slate-50 transition-colors"
+                              >
+                                <td className="p-4 font-black text-slate-800 font-mono italic">
+                                  {(i + 1).toString()}
+                                </td>
+                                <td className="p-4 font-bold uppercase tracking-tight text-slate-700 text-sm">
+                                  {s.team}
+                                </td>
+                                <td className="p-4 text-center font-bold text-slate-500">
+                                  {s.played}
+                                </td>
+                                <td className="p-4 text-center font-bold text-slate-500 font-mono">
+                                  <span
+                                    className={
+                                      s.diff > 0
+                                        ? "text-green-600"
+                                        : s.diff < 0
+                                          ? "text-red-500"
+                                          : "text-slate-400"
+                                    }
+                                  >
+                                    {s.diff > 0 ? `+${s.diff}` : s.diff}
+                                  </span>
+                                </td>
+                                <td className="p-4 text-center">
+                                  <span className="inline-flex items-center justify-center px-3 py-1 bg-primary text-white font-black text-xs italic tracking-tighter">
+                                    {s.points} {t.pts}
+                                  </span>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    ));
+                  }
+
+                  return (
+                    <div className="bg-white rounded-sm border-t-4 border-slate-200 overflow-hidden shadow-sm flex flex-col">
+                      <div className="p-5 bg-slate-50 border-b border-slate-200 flex justify-between items-center h-16 shrink-0">
+                        <h4 className="text-xs font-black uppercase tracking-widest text-slate-500 truncate mr-4">
+                          {lang === "vi"
+                            ? sports.find((s) => s.id === selectedSportId)
+                                ?.name_vi
+                            : sports.find((s) => s.id === selectedSportId)
+                                ?.name}{" "}
+                          •{" "}
+                          {lang === "vi"
+                            ? sports.find((s) => s.id === selectedSportId)
+                                ?.category_vi
+                            : sports.find((s) => s.id === selectedSportId)
+                                ?.category}
+                        </h4>
+                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest whitespace-nowrap">
+                          {lang === "vi" ? "BXH Vòng bảng" : "Group Standings"}
+                        </span>
+                      </div>
+                      <table className="w-full text-left border-collapse table-fixed">
+                        <thead>
+                          <tr className="bg-white border-b border-slate-100">
+                            <th className="p-4 text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 w-16">
+                              {t.rank}
+                            </th>
+                            <th className="p-4 text-[9px] font-black uppercase tracking-[0.2em] text-slate-400">
+                              {lang === "vi" ? "Đội / VĐV" : "Team / Player"}
+                            </th>
+                            <th className="p-4 text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 text-center w-20">
+                              {t.played}
+                            </th>
+                            <th className="p-4 text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 text-center w-20">
+                              {t.difference}
+                            </th>
+                            <th className="p-4 text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 text-center w-24">
+                              {t.points}
+                            </th>
+                          </tr>
+                        </thead>
+                        <AnimatePresence mode="wait">
+                          <motion.tbody
+                            key={selectedSportId}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 0.2 }}
+                          >
+                            {sportStandings?.map((s, i) => (
+                              <tr
+                                key={s.team}
+                                className="border-b border-slate-50 hover:bg-slate-50 transition-colors"
+                              >
+                                <td className="p-4 font-black text-slate-800 font-mono italic">
+                                  {(i + 1).toString()}
+                                </td>
+                                <td className="p-4 font-bold uppercase tracking-tight text-slate-700 text-sm">
+                                  {s.team}
+                                </td>
+                                <td className="p-4 text-center font-bold text-slate-500">
+                                  {s.played}
+                                </td>
+                                <td className="p-4 text-center font-bold text-slate-500 font-mono">
+                                  <span
+                                    className={
+                                      s.diff > 0
+                                        ? "text-green-600"
+                                        : s.diff < 0
+                                          ? "text-red-500"
+                                          : "text-slate-400"
+                                    }
+                                  >
+                                    {s.diff > 0 ? `+${s.diff}` : s.diff}
+                                  </span>
+                                </td>
+                                <td className="p-4 text-center">
+                                  <span className="inline-flex items-center justify-center px-3 py-1 bg-primary text-white font-black text-xs italic tracking-tighter">
+                                    {s.points} {t.pts}
+                                  </span>
+                                </td>
+                              </tr>
+                            ))}
+                          </motion.tbody>
+                        </AnimatePresence>
+                      </table>
+                    </div>
+                  );
+                })()}
               </div>
             </div>
           )}

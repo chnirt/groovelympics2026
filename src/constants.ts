@@ -519,10 +519,7 @@ export const MEDALS: CountryMedal[] = import.meta.env.DEV
     ]
   : [];
 
-export const SPORT_STANDINGS: Record<
-  number,
-  { team: string; played: number; points: number; diff: number }[]
-> = {
+export const SPORT_STANDINGS: Record<number, any[]> = {
   1: [
     // Chess - Caro
     { team: "Tuan Nguyen", played: 3, points: 7, diff: 5 },
@@ -539,10 +536,26 @@ export const SPORT_STANDINGS: Record<
   ],
   3: [
     // Esports - Audition
-    { team: "Vietnam", played: 4, points: 12, diff: 240 },
-    { team: "South Korea", played: 4, points: 9, diff: 120 },
-    { team: "Thailand", played: 4, points: 6, diff: -50 },
-    { team: "China", played: 4, points: 3, diff: -310 },
+    {
+      group: "Audition - Individual",
+      group_vi: "Audition - Cá nhân",
+      rankings: [
+        { team: "ProDancer_VN", played: 4, points: 12, diff: 240 },
+        { team: "K-PopKing", played: 4, points: 9, diff: 120 },
+        { team: "ThaiBPM", played: 4, points: 6, diff: -50 },
+        { team: "ChinaStep", played: 4, points: 3, diff: -310 },
+      ],
+    },
+    {
+      group: "Audition - Doubles",
+      group_vi: "Audition - Đôi",
+      rankings: [
+        { team: "VN_Duo", played: 3, points: 9, diff: 150 },
+        { team: "Team_KR", played: 3, points: 6, diff: 80 },
+        { team: "Duo_TH", played: 3, points: 3, diff: -20 },
+        { team: "CN_Pair", played: 3, points: 0, diff: -210 },
+      ],
+    },
   ],
   4: [
     // Esports - FC 26
