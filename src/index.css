@@ -1,10 +1,11 @@
+@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800;900&display=swap');
 @import "tailwindcss";
 
 @theme {
   --color-primary: #dc0475;
   --color-background-app: #f3f4f6;
   --color-sidebar: #000000;
-  --font-sans: "Inter", "Helvetica Neue", Arial, sans-serif;
+  --font-sans: "Be Vietnam Pro", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
 }
 
 @layer base {
