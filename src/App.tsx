@@ -788,7 +788,6 @@ function ScheduleView({
 
                   <div className="grid grid-cols-1 gap-4 items-stretch">
                     {dayMatches.map((match) => {
-                      console.log("🚀 ~ ScheduleView ~ match:", match);
                       const matchSport = sports.find(
                         (s) => s.id === match.sportId,
                       );
@@ -876,7 +875,7 @@ function ScheduleView({
                               <div className="min-w-0 flex flex-col items-end">
                                 <div className="flex items-center gap-2 mb-1 justify-end w-full">
                                   <h4
-                                    className={`text-base sm:text-2xl font-black uppercase tracking-tighter truncate leading-none
+                                    className={`text-base sm:text-2xl font-black uppercase tracking-tighter leading-none text-center
                                 text-slate-900
                                 ${isWinningA || match.status === "live" ? "text-primary" : ""}
                               `}
@@ -956,7 +955,7 @@ function ScheduleView({
 
                               <div className="min-w-0 text-left">
                                 <h4
-                                  className={`text-base sm:text-2xl font-black uppercase tracking-tighter truncate leading-none mb-1
+                                  className={`text-base sm:text-2xl font-black uppercase tracking-tighter leading-none text-center mb-1
                               text-slate-900
                               ${isWinningB || match.status === "live" ? "text-primary" : ""}
                             `}
@@ -1153,7 +1152,7 @@ function StandingsView({
                         </td>
                       </tr>
                     ))}
-                </tbody> 
+                </tbody>
               </table>
             </div>
           ) : (
