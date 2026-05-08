@@ -70,7 +70,6 @@ export default function App() {
   const { data: matchesData } = useMatches();
   const { data: medalsData } = useMedals();
   const { data: standingsData } = useStandings();
-  console.log("🚀 ~ App ~ standingsData:", standingsData);
 
   const t = translations[lang];
 
@@ -1051,7 +1050,6 @@ function StandingsView({
   lang: Lang;
   t: any;
 }) {
-  console.log("🚀 ~ StandingsView ~ standings:---", standings);
   const [tab, setTab] = useState<"overall" | "sport">("overall");
   const [selectedSportId, setSelectedSportId] = useState<number>(() => {
     const sportIds = Object.keys(standings).map(Number);

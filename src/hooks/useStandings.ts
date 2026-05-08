@@ -17,7 +17,6 @@ export function useStandings() {
       try {
         const res = await fetch(MEDALS_API_URL);
         const json = await res.json();
-        console.log("🚀 ~ fetchData ~ json:", json)
 
         if (!mounted) return;
 
