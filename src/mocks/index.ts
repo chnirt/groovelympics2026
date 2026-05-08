@@ -1,4 +1,4 @@
-import { Sport, Athlete, Match, CountryMedal } from "./types";
+import { Sport, Athlete, Match, CountryMedal } from "../types";
 
 export const SPORTS: Sport[] = import.meta.env.DEV
   ? [
@@ -519,84 +519,86 @@ export const MEDALS: CountryMedal[] = import.meta.env.DEV
     ]
   : [];
 
-export const SPORT_STANDINGS: Record<number, any[]> = {
-  1: [
-    // Chess - Caro
-    { team: "Tuan Nguyen", played: 3, points: 7, diff: 5 },
-    { team: "Hoang Lam", played: 3, points: 6, diff: 3 },
-    { team: "Dinh Nguyen", played: 3, points: 3, diff: -2 },
-    { team: "Gia Huy", played: 3, points: 1, diff: -6 },
-  ],
-  2: [
-    // Chess - Domino
-    { team: "Alex Turner", played: 2, points: 6, diff: 4 },
-    { team: "John Doe", played: 2, points: 3, diff: 0 },
-    { team: "Hiroshi Sato", played: 2, points: 3, diff: -1 },
-    { team: "Maria Garcia", played: 2, points: 0, diff: -3 },
-  ],
-  3: [
-    // Esports - Audition
-    {
-      group: "Audition - Individual",
-      group_vi: "Audition - Cá nhân",
-      rankings: [
-        { team: "ProDancer_VN", played: 4, points: 12, diff: 240 },
-        { team: "K-PopKing", played: 4, points: 9, diff: 120 },
-        { team: "ThaiBPM", played: 4, points: 6, diff: -50 },
-        { team: "ChinaStep", played: 4, points: 3, diff: -310 },
+export const SPORT_STANDINGS: Record<number, any[]> = import.meta.env.DEV
+  ? {
+      1: [
+        // Chess - Caro
+        { team: "Tuan Nguyen", played: 3, points: 7, diff: 5 },
+        { team: "Hoang Lam", played: 3, points: 6, diff: 3 },
+        { team: "Dinh Nguyen", played: 3, points: 3, diff: -2 },
+        { team: "Gia Huy", played: 3, points: 1, diff: -6 },
       ],
-    },
-    {
-      group: "Audition - Doubles",
-      group_vi: "Audition - Đôi",
-      rankings: [
-        { team: "VN_Duo", played: 3, points: 9, diff: 150 },
-        { team: "Team_KR", played: 3, points: 6, diff: 80 },
-        { team: "Duo_TH", played: 3, points: 3, diff: -20 },
-        { team: "CN_Pair", played: 3, points: 0, diff: -210 },
+      2: [
+        // Chess - Domino
+        { team: "Alex Turner", played: 2, points: 6, diff: 4 },
+        { team: "John Doe", played: 2, points: 3, diff: 0 },
+        { team: "Hiroshi Sato", played: 2, points: 3, diff: -1 },
+        { team: "Maria Garcia", played: 2, points: 0, diff: -3 },
       ],
-    },
-  ],
-  4: [
-    // Esports - FC 26
-    { team: "Bao Nam", played: 5, points: 15, diff: 12 },
-    { team: "Quoc Anh", played: 5, points: 12, diff: 8 },
-    { team: "Thanh Tung", played: 5, points: 9, diff: -2 },
-    { team: "Minh Khai", played: 5, points: 6, diff: -18 },
-  ],
-  5: [
-    // Arena of Valor
-    { team: "Team Secret", played: 2, points: 6, diff: 4 },
-    { team: "Team Flash", played: 2, points: 3, diff: 1 },
-    { team: "Saigon Phantom", played: 2, points: 3, diff: -1 },
-    { team: "V Gaming", played: 2, points: 0, diff: -4 },
-  ],
-  6: [
-    // Esports - Mario Kart
-    { team: "Maria Garcia", played: 3, points: 9, diff: 15 },
-    { team: "Alex Turner", played: 3, points: 6, diff: 5 },
-    { team: "John Doe", played: 3, points: 3, diff: -8 },
-    { team: "Hiroshi Sato", played: 3, points: 0, diff: -12 },
-  ],
-  7: [
-    // Badminton
-    { team: "Vietnam", played: 3, points: 9, diff: 6 },
-    { team: "Indonesia", played: 3, points: 6, diff: 2 },
-    { team: "Malaysia", played: 3, points: 3, diff: -3 },
-    { team: "Singapore", played: 3, points: 0, diff: -5 },
-  ],
-  8: [
-    // Billiards
-    { team: "John Doe", played: 4, points: 12, diff: 8 },
-    { team: "Zhang Wei", played: 4, points: 9, diff: 4 },
-    { team: "Maria Garcia", played: 4, points: 6, diff: -3 },
-    { team: "Alex Turner", played: 4, points: 3, diff: -9 },
-  ],
-  9: [
-    // Football
-    { team: "Vietnam", played: 3, points: 9, diff: 10 },
-    { team: "Thailand", played: 3, points: 6, diff: 4 },
-    { team: "Indonesia", played: 3, points: 3, diff: -5 },
-    { team: "Malaysia", played: 3, points: 0, diff: -9 },
-  ],
-};
+      3: [
+        // Esports - Audition
+        {
+          group: "Audition - Individual",
+          group_vi: "Audition - Cá nhân",
+          rankings: [
+            { team: "ProDancer_VN", played: 4, points: 12, diff: 240 },
+            { team: "K-PopKing", played: 4, points: 9, diff: 120 },
+            { team: "ThaiBPM", played: 4, points: 6, diff: -50 },
+            { team: "ChinaStep", played: 4, points: 3, diff: -310 },
+          ],
+        },
+        {
+          group: "Audition - Doubles",
+          group_vi: "Audition - Đôi",
+          rankings: [
+            { team: "VN_Duo", played: 3, points: 9, diff: 150 },
+            { team: "Team_KR", played: 3, points: 6, diff: 80 },
+            { team: "Duo_TH", played: 3, points: 3, diff: -20 },
+            { team: "CN_Pair", played: 3, points: 0, diff: -210 },
+          ],
+        },
+      ],
+      4: [
+        // Esports - FC 26
+        { team: "Bao Nam", played: 5, points: 15, diff: 12 },
+        { team: "Quoc Anh", played: 5, points: 12, diff: 8 },
+        { team: "Thanh Tung", played: 5, points: 9, diff: -2 },
+        { team: "Minh Khai", played: 5, points: 6, diff: -18 },
+      ],
+      5: [
+        // Arena of Valor
+        { team: "Team Secret", played: 2, points: 6, diff: 4 },
+        { team: "Team Flash", played: 2, points: 3, diff: 1 },
+        { team: "Saigon Phantom", played: 2, points: 3, diff: -1 },
+        { team: "V Gaming", played: 2, points: 0, diff: -4 },
+      ],
+      6: [
+        // Esports - Mario Kart
+        { team: "Maria Garcia", played: 3, points: 9, diff: 15 },
+        { team: "Alex Turner", played: 3, points: 6, diff: 5 },
+        { team: "John Doe", played: 3, points: 3, diff: -8 },
+        { team: "Hiroshi Sato", played: 3, points: 0, diff: -12 },
+      ],
+      7: [
+        // Badminton
+        { team: "Vietnam", played: 3, points: 9, diff: 6 },
+        { team: "Indonesia", played: 3, points: 6, diff: 2 },
+        { team: "Malaysia", played: 3, points: 3, diff: -3 },
+        { team: "Singapore", played: 3, points: 0, diff: -5 },
+      ],
+      8: [
+        // Billiards
+        { team: "John Doe", played: 4, points: 12, diff: 8 },
+        { team: "Zhang Wei", played: 4, points: 9, diff: 4 },
+        { team: "Maria Garcia", played: 4, points: 6, diff: -3 },
+        { team: "Alex Turner", played: 4, points: 3, diff: -9 },
+      ],
+      9: [
+        // Football
+        { team: "Vietnam", played: 3, points: 9, diff: 10 },
+        { team: "Thailand", played: 3, points: 6, diff: 4 },
+        { team: "Indonesia", played: 3, points: 3, diff: -5 },
+        { team: "Malaysia", played: 3, points: 0, diff: -9 },
+      ],
+    }
+  : {};

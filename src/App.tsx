@@ -20,7 +20,6 @@ import {
   Info,
   User as UserIcon,
   Search,
-  ArrowRight,
   MapPin,
 } from "lucide-react";
 import {
@@ -29,13 +28,14 @@ import {
   MATCHES,
   MEDALS,
   SPORT_STANDINGS,
-} from "./constants";
+} from "./mocks/index";
 import { Sport, Athlete, Match, CountryMedal } from "./types";
 import { translations } from "./translations";
 import { useSports } from "./hooks/useSports";
 import { useAthletes } from "./hooks/useAthletes";
 import { useMatches } from "./hooks/useMatches";
 import { useMedals } from "./hooks/useMedals";
+import { useStandings } from "./hooks/useStandings";
 
 const ICON_MAP: Record<string, any> = {
   Trophy,
@@ -69,6 +69,8 @@ export default function App() {
   const { data: athletesData } = useAthletes();
   const { data: matchesData } = useMatches();
   const { data: medalsData } = useMedals();
+  const { data: standingsData } = useStandings();
+  console.log("🚀 ~ App ~ standingsData:", standingsData);
 
   const t = translations[lang];
 
@@ -88,6 +90,11 @@ export default function App() {
     () => (medalsData.length > 0 ? medalsData : MEDALS),
     [medalsData],
   );
+  const myStandingsData = useMemo(() => {
+    return Object.keys(standingsData || {}).length > 0
+      ? standingsData
+      : SPORT_STANDINGS;
+  }, [standingsData]);
 
   const filteredSports = useMemo(() => {
     return mySportsData.filter((sport: any) => {
@@ -211,7 +218,7 @@ export default function App() {
           <StandingsView
             medals={myMedalsData}
             sports={mySportsData}
-            standings={SPORT_STANDINGS}
+            standings={myStandingsData}
             lang={lang}
             t={t}
           />
@@ -1044,6 +1051,7 @@ function StandingsView({
   lang: Lang;
   t: any;
 }) {
+  console.log("🚀 ~ StandingsView ~ standings:---", standings);
   const [tab, setTab] = useState<"overall" | "sport">("overall");
   const [selectedSportId, setSelectedSportId] = useState<number>(() => {
     const sportIds = Object.keys(standings).map(Number);
