@@ -4,7 +4,7 @@
   --color-primary: #dc0475;
   --color-background-app: #f3f4f6;
   --color-sidebar: #000000;
-  --font-sans: "Helvetica Neue", Arial, sans-serif;
+  --font-sans: "Inter", "Helvetica Neue", Arial, sans-serif;
 }
 
 @layer base {

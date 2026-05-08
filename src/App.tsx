@@ -1153,12 +1153,12 @@ function StandingsView({
                         </td>
                       </tr>
                     ))}
-                </tbody>
+                </tbody> 
               </table>
             </div>
           ) : (
             <div className="space-y-4 lg:space-y-6 min-h-[400px]">
-              <div className="flex gap-2 overflow-x-auto pb-2 mb-2 custom-scrollbar relative mask-fade-right">
+              <div className="flex gap-2 overflow-x-auto pb-2 mb-2 custom-scrollbar relative ">
                 {sports
                   .filter((s) => standings[s.id])
                   .map((s) => (
@@ -1302,7 +1302,7 @@ function AthletesView({
 
   return (
     <div className="space-y-4 lg:space-y-6">
-      <div className="flex gap-2 overflow-x-auto pb-2 custom-scrollbar relative mask-fade-right">
+      <div className="flex gap-2 overflow-x-auto pb-2 custom-scrollbar relative ">
         <button
           onClick={() => setFilter("all")}
           className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-sm text-[10px] font-black uppercase tracking-widest whitespace-nowrap transition-colors relative z-10 ${filter === "all" ? "text-white" : "text-slate-500 hover:text-slate-800"}`}
@@ -1385,10 +1385,10 @@ function AthletesView({
                       {athlete.country}
                     </span>
                   </div>
-                  <ArrowRight
+                  {/* <ArrowRight
                     size={14}
                     className="text-slate-300 group-hover:text-primary transition-colors"
-                  />
+                  /> */}
                 </div>
               </motion.div>
             );
