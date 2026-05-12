@@ -378,9 +378,9 @@ export default function App() {
             GROOVE<span className="text-primary italic">LYMPICS</span> 2026
           </div>
           <div className="flex items-center gap-2 mt-1">
-            <span className="text-[8px] font-black text-white/40 uppercase tracking-[0.15em]">
+            {/* <span className="text-[8px] font-black text-white/40 uppercase tracking-[0.15em]">
               Hanoi • 05/2026
-            </span>
+            </span> */}
             <span className="w-1 h-1 bg-white/20 rounded-full" />
             <span className="text-[8px] font-black text-primary uppercase tracking-[0.1em] italic">
               {lang === "vi" ? "Sân chơi bản lĩnh" : "Global Spirit"}
@@ -876,106 +876,150 @@ function ScheduleView({
                               </div>
                             </div>
 
-                            {/* Middle: Teams & Score */}
-                            <div className="p-5 sm:p-7 grid grid-cols-[1fr_auto_1fr] items-center gap-4 sm:gap-8 md:gap-10 relative">
-                              <div className="min-w-0 flex flex-col items-end">
-                                <div className="flex items-center gap-2 mb-1 justify-end w-full">
-                                  <h4
-                                    className={`text-base sm:text-2xl font-black uppercase tracking-tighter lg:truncate  leading-none
+                            {/* Middle: Teams & Score or Multiple Participants */}
+                            <div className="p-5 sm:p-7 flex flex-col justify-center gap-4 relative h-full">
+                              {match.participants ? (
+                                <div className="flex flex-col gap-2 w-full max-w-2xl mx-auto">
+                                  {match.participants
+                                    .sort(
+                                      (a, b) =>
+                                        (Number(b.score) || 0) -
+                                        (Number(a.score) || 0),
+                                    )
+                                    .map((p, idx) => (
+                                      <div
+                                        key={p.name}
+                                        className={`flex items-center justify-between p-3 rounded-sm border transition-all ${p.isWinner ? "bg-primary/5 border-primary/20 ring-1 ring-primary/20" : "bg-slate-50/50 border-slate-100"}`}
+                                      >
+                                        <div className="flex items-center gap-3">
+                                          <span
+                                            className={`text-[10px] font-black font-mono w-4 ${p.isWinner ? "text-primary" : "text-slate-400"}`}
+                                          >
+                                            0{idx + 1}
+                                          </span>
+                                          <div className="flex flex-col">
+                                            <span
+                                              className={`text-xs sm:text-sm font-black uppercase tracking-tight leading-none mb-1 ${p.isWinner ? "text-primary" : "text-slate-700"}`}
+                                            >
+                                              {p.name}
+                                            </span>
+                                            <span className="text-[7px] font-bold text-slate-400 uppercase tracking-[0.2em]">
+                                              {p.country}
+                                            </span>
+                                          </div>
+                                        </div>
+                                        <div
+                                          className={`px-4 py-1.5 min-w-[80px] text-right font-mono font-black italic text-sm sm:text-base ${p.isWinner ? "text-primary" : "text-slate-600"}`}
+                                        >
+                                          {p.score?.toLocaleString() || "-"}
+                                        </div>
+                                      </div>
+                                    ))}
+                                </div>
+                              ) : (
+                                <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-4 sm:gap-8 md:gap-10 h-full">
+                                  <div className="min-w-0 flex flex-col items-end">
+                                    <div className="flex items-center gap-2 mb-1 justify-end w-full">
+                                      <h4
+                                        className={`text-base sm:text-2xl font-black uppercase tracking-tighter lg:truncate  leading-none
                                 text-slate-900
                                 ${isWinningA || match.status === "live" ? "text-primary" : ""}
                               `}
-                                  >
-                                    {match.teamA}
-                                  </h4>
-                                </div>
-                                <p
-                                  className={`text-[8px] font-black uppercase tracking-[0.15em] opacity-40 text-slate-500`}
-                                >
-                                  {lang === "vi"
-                                    ? match.countryA || "Quốc gia"
-                                    : match.countryA || "COUNTRY"}
-                                </p>
-                              </div>
+                                      >
+                                        {match.teamA}
+                                      </h4>
+                                    </div>
+                                    <p
+                                      className={`text-[8px] font-black uppercase tracking-[0.15em] opacity-40 text-slate-500`}
+                                    >
+                                      {lang === "vi"
+                                        ? match.countryA || "Quốc gia"
+                                        : match.countryA || "COUNTRY"}
+                                    </p>
+                                  </div>
 
-                              <div className="flex flex-col items-center gap-1 sm:gap-2 shrink-0 z-10">
-                                <div
-                                  className={`px-4 sm:px-10 py-3 sm:py-4 rounded-none flex items-center gap-3 sm:gap-6 font-mono font-black italic relative
+                                  <div className="flex flex-col items-center gap-1 sm:gap-2 shrink-0 z-10">
+                                    <div
+                                      className={`px-4 sm:px-10 py-3 sm:py-4 rounded-none flex items-center gap-3 sm:gap-6 font-mono font-black italic relative
                               ${
                                 match.status === "live"
                                   ? "bg-primary text-white shadow-lg"
                                   : "bg-slate-900 text-white shadow-md"
                               }
                             `}
-                                >
-                                  <span
-                                    className={`text-2xl sm:text-4xl ${isWinningA || match.status === "live" ? "text-white underline decoration-2" : ""}`}
-                                  >
-                                    {typeof match.scoreA === "number"
-                                      ? match.scoreA
-                                      : "-"}
-                                  </span>
-                                  <span className="opacity-20 text-lg sm:text-2xl not-italic">
-                                    :
-                                  </span>
-                                  <span
-                                    className={`text-2xl sm:text-4xl ${isWinningB || match.status === "live" ? "text-white underline decoration-2" : ""}`}
-                                  >
-                                    {typeof match.scoreB === "number"
-                                      ? match.scoreB
-                                      : "-"}
-                                  </span>
-                                </div>
-                                {match.status === "live" && (
-                                  <div className="flex items-center gap-1.5 mt-1">
-                                    <span className="text-[7px] sm:text-[9px] font-black text-primary uppercase tracking-[0.3em]">
-                                      {lang === "vi"
-                                        ? "ĐANG THI ĐẤU"
-                                        : "MATCH IN PROGRESS"}
-                                    </span>
-                                  </div>
-                                )}
-                                <div className="lg:hidden flex items-center gap-1 mt-1 opacity-40">
-                                  {matchSport?.location && (
-                                    <>
-                                      <MapPin size={8} />
-                                      <span className="text-[7px] font-black uppercase tracking-tighter">
-                                        {lang === "vi"
-                                          ? matchSport.location_vi?.includes(
-                                              ":",
-                                            )
-                                            ? matchSport.location_vi
-                                                .split(":")[1]
-                                                .trim()
-                                            : matchSport.location_vi
-                                          : matchSport.location?.includes(":")
-                                            ? matchSport.location
-                                                .split(":")[1]
-                                                .trim()
-                                            : matchSport.location}
+                                    >
+                                      <span
+                                        className={`text-2xl sm:text-4xl ${isWinningA || match.status === "live" ? "text-white underline decoration-2" : ""}`}
+                                      >
+                                        {typeof match.scoreA === "number"
+                                          ? match.scoreA
+                                          : "-"}
                                       </span>
-                                    </>
-                                  )}
-                                </div>
-                              </div>
+                                      <span className="opacity-20 text-lg sm:text-2xl not-italic">
+                                        :
+                                      </span>
+                                      <span
+                                        className={`text-2xl sm:text-4xl ${isWinningB || match.status === "live" ? "text-white underline decoration-2" : ""}`}
+                                      >
+                                        {typeof match.scoreB === "number"
+                                          ? match.scoreB
+                                          : "-"}
+                                      </span>
+                                    </div>
+                                    {match.status === "live" && (
+                                      <div className="flex items-center gap-1.5 mt-1">
+                                        <span className="text-[7px] sm:text-[9px] font-black text-primary uppercase tracking-[0.3em]">
+                                          {lang === "vi"
+                                            ? "ĐANG THI ĐẤU"
+                                            : "MATCH IN PROGRESS"}
+                                        </span>
+                                      </div>
+                                    )}
+                                    <div className="lg:hidden flex items-center gap-1 mt-1 opacity-40">
+                                      {matchSport?.location && (
+                                        <>
+                                          <MapPin size={8} />
+                                          <span className="text-[7px] font-black uppercase tracking-tighter">
+                                            {lang === "vi"
+                                              ? matchSport.location_vi?.includes(
+                                                  ":",
+                                                )
+                                                ? matchSport.location_vi
+                                                    .split(":")[1]
+                                                    .trim()
+                                                : matchSport.location_vi
+                                              : matchSport.location?.includes(
+                                                    ":",
+                                                  )
+                                                ? matchSport.location
+                                                    .split(":")[1]
+                                                    .trim()
+                                                : matchSport.location}
+                                          </span>
+                                        </>
+                                      )}
+                                    </div>
+                                  </div>
 
-                              <div className="min-w-0 text-left">
-                                <h4
-                                  className={`text-base sm:text-2xl font-black uppercase tracking-tighter lg:truncate leading-none mb-1
+                                  <div className="min-w-0 text-left">
+                                    <h4
+                                      className={`text-base sm:text-2xl font-black uppercase tracking-tighter lg:truncate leading-none mb-1
                               text-slate-900
                               ${isWinningB || match.status === "live" ? "text-primary" : ""}
                             `}
-                                >
-                                  {match.teamB}
-                                </h4>
-                                <p
-                                  className={`text-[8px] font-black uppercase tracking-[0.15em] opacity-40 text-slate-500`}
-                                >
-                                  {lang === "vi"
-                                    ? match.countryB || "Quốc gia"
-                                    : match.countryB || "COUNTRY"}
-                                </p>
-                              </div>
+                                    >
+                                      {match.teamB}
+                                    </h4>
+                                    <p
+                                      className={`text-[8px] font-black uppercase tracking-[0.15em] opacity-40 text-slate-500`}
+                                    >
+                                      {lang === "vi"
+                                        ? match.countryB || "Quốc gia"
+                                        : match.countryB || "COUNTRY"}
+                                    </p>
+                                  </div>
+                                </div>
+                              )}
                             </div>
 
                             {/* Right: Info/Action (Desktop Only) */}

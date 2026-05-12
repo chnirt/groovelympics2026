@@ -28,6 +28,13 @@ export interface Athlete {
   image?: string;
 }
 
+export interface Participant {
+  name: string;
+  country?: string;
+  score?: number | string;
+  isWinner?: boolean;
+}
+
 export interface Match {
   id: string;
   sportId: number;
@@ -40,6 +47,7 @@ export interface Match {
   status: "upcoming" | "live" | "finished";
   timestamp: string;
   stage: string;
+  participants?: Participant[];
 }
 
 export interface CountryMedal {
