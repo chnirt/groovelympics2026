@@ -47,7 +47,7 @@ export interface Match {
   status: "upcoming" | "live" | "finished";
   timestamp: string;
   stage: string;
-  participants?: Participant[];
+  participants: Participant[];
 }
 
 export interface CountryMedal {

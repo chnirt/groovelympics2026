@@ -31,11 +31,13 @@ import {
 } from "./mocks/index";
 import { Sport, Athlete, Match, CountryMedal } from "./types";
 import { translations } from "./translations";
-import { useSports } from "./hooks/useSports";
-import { useAthletes } from "./hooks/useAthletes";
-import { useMatches } from "./hooks/useMatches";
-import { useMedals } from "./hooks/useMedals";
-import { useStandings } from "./hooks/useStandings";
+// import { useSports } from "./hooks/useSports";
+// import { useAthletes } from "./hooks/useAthletes";
+// import { useMatches } from "./hooks/useMatches";
+// import { useMedals } from "./hooks/useMedals";
+// import { useStandings } from "./hooks/useStandings";
+import { useBootstrap } from "./hooks/useBootstrap";
+import { get } from "lodash";
 
 const ICON_MAP: Record<string, any> = {
   Trophy,
@@ -65,11 +67,18 @@ export default function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [currentView, setCurrentView] = useState<View>("sports");
   const [lang, setLang] = useState<Lang>("vi");
-  const { data: sportsData } = useSports();
-  const { data: athletesData } = useAthletes();
-  const { data: matchesData } = useMatches();
-  const { data: medalsData } = useMedals();
-  const { data: standingsData } = useStandings();
+  const { data: bootstrapData } = useBootstrap();
+  // console.log("🚀 ~ App ~ bootstrapData:", bootstrapData);
+  const sportsData = get(bootstrapData, "sports", []);
+  const athletesData = get(bootstrapData, "athletes", []);
+  const matchesData = get(bootstrapData, "matches", []);
+  const medalsData = get(bootstrapData, "medals", []);
+  const standingsData = get(bootstrapData, "standings", []);
+  // const { data: sportsData } = useSports();
+  // const { data: athletesData } = useAthletes();
+  // const { data: matchesData } = useMatches();
+  // const { data: medalsData } = useMedals();
+  // const { data: standingsData } = useStandings();
 
   const t = translations[lang];
 
@@ -126,7 +135,7 @@ export default function App() {
         return (
           <>
             <div className="bento-grid">
-              {filteredSports.map((sport, index) => {
+              {filteredSports.map((sport: any, index: number) => {
                 const IconComp = ICON_MAP[sport.icon] || Trophy;
                 const featured = isFeatured(sport);
                 const sName = lang === "vi" ? sport.name_vi : sport.name;
@@ -236,7 +245,7 @@ export default function App() {
         const sportsWithVenues = mySportsData.filter((s: any) => s.location);
         return (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {sportsWithVenues.map((s) => (
+            {sportsWithVenues.map((s: any) => (
               <div
                 key={s.id}
                 className="bg-white p-8 rounded-sm border-t-4 border-primary shadow-sm group"
@@ -878,7 +887,7 @@ function ScheduleView({
 
                             {/* Middle: Teams & Score or Multiple Participants */}
                             <div className="p-5 sm:p-7 flex flex-col justify-center gap-4 relative h-full">
-                              {match.participants ? (
+                              {match.participants?.length > 0 ? (
                                 <div className="flex flex-col gap-2 w-full max-w-2xl mx-auto">
                                   {match.participants
                                     .sort(
