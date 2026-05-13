@@ -150,7 +150,7 @@ export default function App() {
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ delay: index * 0.05 }}
                     onClick={() => setSelectedSport(sport)}
-                    className={`card-bento cursor-pointer group hover:-translate-y-1 ${featured ? "lg:col-span-2" : ""} ${featured && sport.name === "Football" ? "card-featured" : FeaturedSpecialStyle(sport)}`}
+                    className={`card-bento cursor-pointer group hover:-translate-y-1 ${featured ? "lg:col-span-2" : ""} ${featured && sport.name === "Football2" ? "card-featured" : FeaturedSpecialStyle(sport)}`}
                     style={
                       featured && sport.name === "Badminton"
                         ? {
@@ -164,12 +164,12 @@ export default function App() {
                     <div className="h-full flex flex-col justify-between min-h-[140px]">
                       <div>
                         <div
-                          className={`text-[10px] font-bold uppercase tracking-widest ${(featured && sport.name === "Football") || (featured && sport.name === "Badminton") ? "text-white/70" : "text-black/50"}`}
+                          className={`text-[10px] font-bold uppercase tracking-widest ${(featured && sport.name === "Football2") || (featured && sport.name === "Badminton") ? "text-white/70" : "text-black/50"}`}
                         >
                           {sName} • {sFormat}
                         </div>
                         <div
-                          className={`text-2xl font-extrabold uppercase tracking-tighter mt-2 leading-none transition-transform group-hover:scale-[1.02] origin-left ${featured ? "text-[32px]" : ""} ${(featured && sport.name === "Football") || (featured && sport.name === "Badminton") ? "text-white" : "text-slate-900"}`}
+                          className={`text-2xl font-extrabold uppercase tracking-tighter mt-2 leading-none transition-transform group-hover:scale-[1.02] origin-left ${featured ? "text-[32px]" : ""} ${(featured && sport.name === "Football2") || (featured && sport.name === "Badminton") ? "text-white" : "text-slate-900"}`}
                         >
                           {sCat}
                         </div>
@@ -180,14 +180,14 @@ export default function App() {
                           {sRules.split("\n").map((rule: string, i: number) => (
                             <span
                               key={i}
-                              className={`inline-block px-2 py-0.5 rounded-sm text-[8px] font-black uppercase tracking-widest ${(featured && sport.name === "Football") || (featured && sport.name === "Badminton") ? "bg-white/20 text-white" : "bg-black/5 text-slate-500"}`}
+                              className={`inline-block px-2 py-0.5 rounded-sm text-[8px] font-black uppercase tracking-widest ${(featured && sport.name === "Football2") || (featured && sport.name === "Badminton") ? "bg-white/20 text-white" : "bg-black/5 text-slate-500"}`}
                             >
                               {rule}
                             </span>
                           ))}
                         </div>
                         <div
-                          className={`p-2.5 transition-all duration-300 rounded-lg shrink-0 ${(featured && sport.name === "Football") || (featured && sport.name === "Badminton") ? "bg-white/20 text-white group-hover:bg-white group-hover:text-black group-hover:scale-110" : "bg-black/5 text-slate-400 group-hover:bg-primary group-hover:text-white group-hover:scale-110"}`}
+                          className={`p-2.5 transition-all duration-300 rounded-lg shrink-0 ${(featured && sport.name === "Football2") || (featured && sport.name === "Badminton") ? "bg-white/20 text-white group-hover:bg-white group-hover:text-black group-hover:scale-110" : "bg-black/5 text-slate-400 group-hover:bg-primary group-hover:text-white group-hover:scale-110"}`}
                         >
                           <IconComp
                             size={18}
@@ -205,7 +205,7 @@ export default function App() {
       case "schedule":
         return (
           <ScheduleView
-            matches={myMatchesData.filter((m) => m.status !== "finished")}
+            matches={myMatchesData.filter((m: any) => m.status !== "finished")}
             sports={mySportsData}
             lang={lang}
             t={t}
@@ -214,7 +214,7 @@ export default function App() {
       case "results":
         return (
           <ScheduleView
-            matches={myMatchesData.filter((m) => m.status === "finished")}
+            matches={myMatchesData.filter((m: any) => m.status === "finished")}
             sports={mySportsData}
             lang={lang}
             t={t}
@@ -927,19 +927,19 @@ function ScheduleView({
                                 </div>
                               ) : (
                                 <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-4 sm:gap-8 md:gap-10 h-full">
-                                  <div className="min-w-0 flex flex-col items-end">
-                                    <div className="flex items-center gap-2 mb-1 justify-end w-full">
+                                  <div className="min-w-0 flex flex-col items-center sm:items-end">
+                                    <div className="flex items-center gap-2 mb-1 justify-center sm:justify-end w-full">
                                       <h4
-                                        className={`text-base sm:text-2xl font-black uppercase tracking-tighter lg:truncate  leading-none
-                                text-slate-900
-                                ${isWinningA || match.status === "live" ? "text-primary" : ""}
-                              `}
+                                        className={`text-base sm:text-2xl font-black uppercase tracking-tighter text-center sm:text-left
+                                    text-slate-900
+                                    ${isWinningA || match.status === "live" ? "text-primary" : ""}
+                                  `}
                                       >
                                         {match.teamA}
                                       </h4>
                                     </div>
                                     <p
-                                      className={`text-[8px] font-black uppercase tracking-[0.15em] opacity-40 text-slate-500`}
+                                      className={`text-[8px] font-black uppercase tracking-[0.15em] opacity-40 text-slate-500 text-center sm:text-right`}
                                     >
                                       {lang === "vi"
                                         ? match.countryA || "Quốc gia"
@@ -984,11 +984,14 @@ function ScheduleView({
                                         </span>
                                       </div>
                                     )}
-                                    <div className="lg:hidden flex items-center gap-1 mt-1 opacity-40">
+                                    <div className="lg:hidden flex items-start justify-center gap-1.5 mt-2 opacity-50 px-2 w-full max-w-[140px] mx-auto">
                                       {matchSport?.location && (
                                         <>
-                                          <MapPin size={8} />
-                                          <span className="text-[7px] font-black uppercase tracking-tighter">
+                                          <MapPin
+                                            size={8}
+                                            className="shrink-0 mt-px"
+                                          />
+                                          <span className="text-[8px] font-black uppercase tracking-tighter whitespace-normal text-center leading-[1.2]">
                                             {lang === "vi"
                                               ? matchSport.location_vi?.includes(
                                                   ":",
@@ -1010,15 +1013,17 @@ function ScheduleView({
                                     </div>
                                   </div>
 
-                                  <div className="min-w-0 text-left">
-                                    <h4
-                                      className={`text-base sm:text-2xl font-black uppercase tracking-tighter lg:truncate leading-none mb-1
-                              text-slate-900
-                              ${isWinningB || match.status === "live" ? "text-primary" : ""}
-                            `}
-                                    >
-                                      {match.teamB}
-                                    </h4>
+                                  <div className="min-w-0 flex flex-col items-center sm:items-start">
+                                    <div className="flex items-center gap-2 mb-1 justify-center sm:justify-start w-full">
+                                      <h4
+                                        className={`text-base sm:text-2xl font-black uppercase tracking-tighter text-center sm:text-left
+                                    text-slate-900
+                                    ${isWinningB || match.status === "live" ? "text-primary" : ""}
+                                  `}
+                                      >
+                                        {match.teamB}
+                                      </h4>
+                                    </div>
                                     <p
                                       className={`text-[8px] font-black uppercase tracking-[0.15em] opacity-40 text-slate-500`}
                                     >
@@ -1052,12 +1057,12 @@ function ScheduleView({
                                   {match.stage}
                                 </span>
                               </div>
-                              <div className="flex items-start gap-2">
+                              <div className="flex items-start gap-2 max-w-full overflow-hidden">
                                 <MapPin
                                   size={12}
                                   className="text-slate-300 mt-0.5 shrink-0"
                                 />
-                                <span className="text-[9px] font-bold text-slate-500 uppercase leading-tight tracking-tight">
+                                <span className="text-[9px] font-bold text-slate-500 uppercase leading-tight tracking-tight whitespace-normal break-words">
                                   {lang === "vi"
                                     ? matchSport?.location_vi || "Địa điểm TBD"
                                     : matchSport?.location || "Venue TBD"}
@@ -1271,19 +1276,19 @@ function StandingsView({
                         <table className="w-full text-left border-collapse table-fixed">
                           <thead>
                             <tr className="bg-white border-b border-slate-100">
-                              <th className="p-4 text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 w-16">
+                              <th className="p-2 sm:p-4 text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 w-10 sm:w-16">
                                 {t.rank}
                               </th>
-                              <th className="p-4 text-[9px] font-black uppercase tracking-[0.2em] text-slate-400">
+                              <th className="p-2 sm:p-4 text-[9px] font-black uppercase tracking-[0.2em] text-slate-400">
                                 {lang === "vi" ? "Đội / VĐV" : "Team / Player"}
                               </th>
-                              <th className="p-4 text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 text-center w-20">
+                              <th className="p-2 sm:p-4 text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 text-center w-12 sm:w-20">
                                 {t.played}
                               </th>
-                              <th className="p-4 text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 text-center w-20">
+                              <th className="p-2 sm:p-4 text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 text-center w-12 sm:w-20">
                                 {t.difference}
                               </th>
-                              <th className="p-4 text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 text-center w-24">
+                              <th className="p-2 sm:p-4 text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 text-center w-16 sm:w-24">
                                 {t.points}
                               </th>
                             </tr>
@@ -1294,31 +1299,37 @@ function StandingsView({
                                 key={s.team}
                                 className="border-b border-slate-50 hover:bg-slate-50 transition-colors"
                               >
-                                <td className="p-4 font-black text-slate-800 font-mono italic">
+                                <td className="p-2 sm:p-4 font-black text-slate-800 font-mono italic">
                                   {(i + 1).toString()}
                                 </td>
-                                <td className="p-4 font-bold uppercase tracking-tight text-slate-700 text-sm">
+                                <td className="p-2 sm:p-4 font-bold uppercase tracking-tight text-slate-700 text-xs sm:text-sm">
                                   {s.team}
                                 </td>
-                                <td className="p-4 text-center font-bold text-slate-500">
+                                <td className="p-2 sm:p-4 text-center font-bold text-slate-500">
                                   {s.played}
                                 </td>
-                                <td className="p-4 text-center font-bold text-slate-500 font-mono">
+                                <td className="p-2 sm:p-4 text-center font-bold text-slate-500 font-mono">
                                   <span
                                     className={
                                       s.diff > 0
                                         ? "text-green-600"
                                         : s.diff < 0
                                           ? "text-red-500"
-                                          : "text-slate-400"
+                                          : "text-slate-400 text-[10px] sm:text-xs"
                                     }
                                   >
                                     {s.diff > 0 ? `+${s.diff}` : s.diff}
                                   </span>
                                 </td>
-                                <td className="p-4 text-center">
-                                  <span className="inline-flex items-center justify-center px-3 py-1 bg-primary text-white font-black text-xs italic tracking-tighter">
-                                    {s.points} {t.pts}
+                                <td className="p-2 sm:p-4 text-center">
+                                  <span className="inline-flex items-center justify-center px-2 sm:px-3 py-1 bg-primary text-white font-black text-[10px] sm:text-xs italic tracking-tighter whitespace-nowrap">
+                                    {s.points}{" "}
+                                    <span className="hidden sm:inline ml-0.5">
+                                      {t.pts}
+                                    </span>
+                                    <span className="sm:hidden ml-0.5">
+                                      {lang === "vi" ? "Đ" : "P"}
+                                    </span>
                                   </span>
                                 </td>
                               </tr>
@@ -1352,19 +1363,19 @@ function StandingsView({
                       <table className="w-full text-left border-collapse table-fixed">
                         <thead>
                           <tr className="bg-white border-b border-slate-100">
-                            <th className="p-4 text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 w-16">
+                            <th className="p-2 sm:p-4 text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 w-10 sm:w-16">
                               {t.rank}
                             </th>
-                            <th className="p-4 text-[9px] font-black uppercase tracking-[0.2em] text-slate-400">
+                            <th className="p-2 sm:p-4 text-[9px] font-black uppercase tracking-[0.2em] text-slate-400">
                               {lang === "vi" ? "Đội / VĐV" : "Team / Player"}
                             </th>
-                            <th className="p-4 text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 text-center w-20">
+                            <th className="p-2 sm:p-4 text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 text-center w-12 sm:w-20">
                               {t.played}
                             </th>
-                            <th className="p-4 text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 text-center w-20">
+                            <th className="p-2 sm:p-4 text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 text-center w-12 sm:w-20">
                               {t.difference}
                             </th>
-                            <th className="p-4 text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 text-center w-24">
+                            <th className="p-2 sm:p-4 text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 text-center w-16 sm:w-24">
                               {t.points}
                             </th>
                           </tr>
@@ -1382,31 +1393,37 @@ function StandingsView({
                                 key={s.team}
                                 className="border-b border-slate-50 hover:bg-slate-50 transition-colors"
                               >
-                                <td className="p-4 font-black text-slate-800 font-mono italic">
+                                <td className="p-2 sm:p-4 font-black text-slate-800 font-mono italic">
                                   {(i + 1).toString()}
                                 </td>
-                                <td className="p-4 font-bold uppercase tracking-tight text-slate-700 text-sm">
+                                <td className="p-2 sm:p-4 font-bold uppercase tracking-tight text-slate-700 text-xs sm:text-sm">
                                   {s.team}
                                 </td>
-                                <td className="p-4 text-center font-bold text-slate-500">
+                                <td className="p-2 sm:p-4 text-center font-bold text-slate-500">
                                   {s.played}
                                 </td>
-                                <td className="p-4 text-center font-bold text-slate-500 font-mono">
+                                <td className="p-2 sm:p-4 text-center font-bold text-slate-500 font-mono">
                                   <span
                                     className={
                                       s.diff > 0
                                         ? "text-green-600"
                                         : s.diff < 0
                                           ? "text-red-500"
-                                          : "text-slate-400"
+                                          : "text-slate-400 text-[10px] sm:text-xs"
                                     }
                                   >
                                     {s.diff > 0 ? `+${s.diff}` : s.diff}
                                   </span>
                                 </td>
-                                <td className="p-4 text-center">
-                                  <span className="inline-flex items-center justify-center px-3 py-1 bg-primary text-white font-black text-xs italic tracking-tighter">
-                                    {s.points} {t.pts}
+                                <td className="p-2 sm:p-4 text-center">
+                                  <span className="inline-flex items-center justify-center px-2 sm:px-3 py-1 bg-primary text-white font-black text-[10px] sm:text-xs italic tracking-tighter whitespace-nowrap">
+                                    {s.points}{" "}
+                                    <span className="hidden sm:inline ml-0.5">
+                                      {t.pts}
+                                    </span>
+                                    <span className="sm:hidden ml-0.5">
+                                      {lang === "vi" ? "Đ" : "P"}
+                                    </span>
                                   </span>
                                 </td>
                               </tr>
