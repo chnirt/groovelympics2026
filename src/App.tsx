@@ -392,7 +392,8 @@ export default function App() {
             </span> */}
             <span className="w-1 h-1 bg-white/20 rounded-full" />
             <span className="text-[8px] font-black text-primary uppercase tracking-[0.1em] italic">
-              {lang === "vi" ? "Sân chơi bản lĩnh" : "Global Spirit"}
+              {/* {lang === "vi" ? "Giải Phóng Nhịp Điệu Thể Thao" : "Global Spirit"} */}
+              Unleash The Groove
             </span>
           </div>
         </div>
@@ -502,7 +503,8 @@ export default function App() {
             </AnimatePresence>
             <p className="mt-2 lg:mt-4 text-[9px] lg:text-[10px] font-black text-black/60 uppercase tracking-[0.3em]">
               Groovelympics 2026 •{" "}
-              {lang === "vi" ? "Sân chơi bản lĩnh" : "Global Spirit"}
+              {/* {lang === "vi" ? "Giải Phóng Nhịp Điệu Thể Thao" : "Global Spirit"} */}
+              Unleash The Groove
             </p>
           </div>
 
@@ -984,9 +986,26 @@ function ScheduleView({
                                         </span>
                                       </div>
                                     )}
-                                    <div className="lg:hidden flex items-start justify-center gap-1.5 mt-2 opacity-50 px-2 w-full max-w-[140px] mx-auto">
+
+                                    {/* Mobile Info: Stage & Location grouped together */}
+                                    <div className="lg:hidden flex flex-col items-center gap-2 mt-4 pt-4 border-t border-slate-50 opacity-60">
+                                      <div className="flex items-center gap-1.5">
+                                        <Zap
+                                          size={10}
+                                          className={
+                                            match.status === "live"
+                                              ? "text-primary"
+                                              : "text-slate-300"
+                                          }
+                                        />
+                                        <span
+                                          className={`text-[9px] font-black uppercase tracking-[0.15em] ${match.status === "live" ? "text-primary" : "text-slate-400"}`}
+                                        >
+                                          {match.stage}
+                                        </span>
+                                      </div>
                                       {matchSport?.location && (
-                                        <>
+                                        <div className="flex items-start justify-center gap-1.5 px-2 w-full max-w-[180px]">
                                           <MapPin
                                             size={8}
                                             className="shrink-0 mt-px"
@@ -1008,7 +1027,7 @@ function ScheduleView({
                                                     .trim()
                                                 : matchSport.location}
                                           </span>
-                                        </>
+                                        </div>
                                       )}
                                     </div>
                                   </div>
@@ -1267,11 +1286,11 @@ function StandingsView({
                               ? groupData.group_vi
                               : groupData.group}
                           </h4>
-                          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest whitespace-nowrap">
+                          {/* <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest whitespace-nowrap">
                             {lang === "vi"
                               ? "BXH Vòng bảng"
                               : "Group Standings"}
-                          </span>
+                          </span> */}
                         </div>
                         <table className="w-full text-left border-collapse table-fixed">
                           <thead>
@@ -1356,9 +1375,9 @@ function StandingsView({
                             : sports.find((s) => s.id === selectedSportId)
                                 ?.category}
                         </h4>
-                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest whitespace-nowrap">
+                        {/* <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest whitespace-nowrap">
                           {lang === "vi" ? "BXH Vòng bảng" : "Group Standings"}
-                        </span>
+                        </span> */}
                       </div>
                       <table className="w-full text-left border-collapse table-fixed">
                         <thead>
