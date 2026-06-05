@@ -1318,8 +1318,24 @@ function StandingsView({
                                 key={s.team}
                                 className="border-b border-slate-50 hover:bg-slate-50 transition-colors"
                               >
-                                <td className="p-2 sm:p-4 font-black text-slate-800 font-mono italic">
-                                  {(i + 1).toString()}
+                                <td className="p-2 sm:p-4 text-center">
+                                  {i === 0 ? (
+                                    <div className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-yellow-400/20 text-yellow-700 font-black text-xs sm:text-sm border border-yellow-400/30 select-none font-sans italic">
+                                      1
+                                    </div>
+                                  ) : i === 1 ? (
+                                    <div className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-slate-400/20 text-slate-600 font-black text-xs sm:text-sm border border-slate-400/30 select-none font-sans italic">
+                                      2
+                                    </div>
+                                  ) : i === 2 ? (
+                                    <div className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-orange-400/20 text-orange-700 font-black text-xs sm:text-sm border border-orange-400/30 select-none font-sans italic">
+                                      3
+                                    </div>
+                                  ) : (
+                                    <span className="font-bold text-slate-400 font-mono text-xs sm:text-sm">
+                                      {(i + 1).toString().padStart(2, "0")}
+                                    </span>
+                                  )}
                                 </td>
                                 <td className="p-2 sm:p-4 font-bold uppercase tracking-tight text-slate-700 text-xs sm:text-sm">
                                   {s.team}
@@ -1412,8 +1428,24 @@ function StandingsView({
                                 key={s.team}
                                 className="border-b border-slate-50 hover:bg-slate-50 transition-colors"
                               >
-                                <td className="p-2 sm:p-4 font-black text-slate-800 font-mono italic">
-                                  {(i + 1).toString()}
+                                <td className="p-2 sm:p-4 text-center">
+                                  {i === 0 ? (
+                                    <div className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-yellow-400/20 text-yellow-700 font-black text-xs sm:text-sm border border-yellow-400/30 select-none font-sans italic">
+                                      1
+                                    </div>
+                                  ) : i === 1 ? (
+                                    <div className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-slate-400/20 text-slate-600 font-black text-xs sm:text-sm border border-slate-400/30 select-none font-sans italic">
+                                      2
+                                    </div>
+                                  ) : i === 2 ? (
+                                    <div className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-orange-400/20 text-orange-700 font-black text-xs sm:text-sm border border-orange-400/30 select-none font-sans italic">
+                                      3
+                                    </div>
+                                  ) : (
+                                    <span className="font-bold text-slate-400 font-mono text-xs sm:text-sm">
+                                      {(i + 1).toString().padStart(2, "0")}
+                                    </span>
+                                  )}
                                 </td>
                                 <td className="p-2 sm:p-4 font-bold uppercase tracking-tight text-slate-700 text-xs sm:text-sm">
                                   {s.team}
