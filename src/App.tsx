@@ -38,6 +38,7 @@ import { translations } from "./translations";
 // import { useStandings } from "./hooks/useStandings";
 import { useBootstrap } from "./hooks/useBootstrap";
 import { get } from "lodash";
+import { useLocalStorage } from "./hooks/useLocalStorage";
 
 const ICON_MAP: Record<string, any> = {
   Trophy,
@@ -65,7 +66,11 @@ export default function App() {
   const [searchQuery, setSearchQuery] = useState("");
   const [athleteSearchQuery, setAthleteSearchQuery] = useState("");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [currentView, setCurrentView] = useState<View>("sports");
+  // const [currentView, setCurrentView] = useState<View>("sports");
+  const [currentView, setCurrentView] = useLocalStorage(
+    "currentView",
+    "sports",
+  );
   const [lang, setLang] = useState<Lang>("vi");
   const { data: bootstrapData } = useBootstrap();
   // console.log("🚀 ~ App ~ bootstrapData:", bootstrapData);
@@ -214,7 +219,9 @@ export default function App() {
       case "results":
         return (
           <ScheduleView
-            matches={myMatchesData.filter((m: any) => m.status === "finished")}
+            matches={myMatchesData
+              .filter((m: any) => m.status === "finished")
+              .reverse()}
             sports={mySportsData}
             lang={lang}
             t={t}
@@ -815,6 +822,9 @@ function ScheduleView({
                         match.status === "finished" &&
                         Number(match.scoreB) > Number(match.scoreA);
 
+                      const isHighlight = match.highlight;
+                      const highlightColor = match.highlightColor;
+
                       return (
                         <div
                           key={match.id}
@@ -932,7 +942,7 @@ function ScheduleView({
                                   <div className="min-w-0 flex flex-col items-center sm:items-end">
                                     <div className="flex items-center gap-2 mb-1 justify-center sm:justify-end w-full">
                                       <h4
-                                        className={`text-base sm:text-2xl font-black uppercase tracking-tighter text-center sm:text-left
+                                        className={`text-base sm:text-2xl font-black uppercase tracking-tighter text-center lg:text-left
                                     text-slate-900
                                     ${isWinningA || match.status === "live" ? "text-primary" : ""}
                                   `}
@@ -1035,7 +1045,7 @@ function ScheduleView({
                                   <div className="min-w-0 flex flex-col items-center sm:items-start">
                                     <div className="flex items-center gap-2 mb-1 justify-center sm:justify-start w-full">
                                       <h4
-                                        className={`text-base sm:text-2xl font-black uppercase tracking-tighter text-center sm:text-left
+                                        className={`text-base sm:text-2xl font-black uppercase tracking-tighter text-center lg:text-left
                                     text-slate-900
                                     ${isWinningB || match.status === "live" ? "text-primary" : ""}
                                   `}
@@ -1061,17 +1071,51 @@ function ScheduleView({
                           ${match.status === "live" ? "bg-primary/5 border-primary/10" : "bg-slate-50/50 border-slate-100"}
                         `}
                             >
-                              <div className="flex items-center gap-2 mb-3">
-                                <Zap
-                                  size={12}
-                                  className={
-                                    match.status === "live"
-                                      ? "text-primary"
-                                      : "text-slate-300"
-                                  }
-                                />
+                              <div
+                                className="flex items-center gap-2 mb-3 px-2 py-1 rounded-sm w-fit"
+                                style={
+                                  isHighlight
+                                    ? {
+                                        borderWidth: 1,
+                                        backgroundColor: highlightColor + "10",
+                                        borderColor: highlightColor + "20",
+                                        color: highlightColor,
+                                      }
+                                    : {}
+                                }
+                              >
+                                {isHighlight ? (
+                                  <Trophy
+                                    size={11}
+                                    className="shrink-0"
+                                    style={
+                                      isHighlight
+                                        ? {
+                                            fill: highlightColor + "30",
+                                            color: highlightColor,
+                                          }
+                                        : {}
+                                    }
+                                  />
+                                ) : (
+                                  <Zap
+                                    size={12}
+                                    className={
+                                      match.status === "live"
+                                        ? "text-primary"
+                                        : "text-slate-300"
+                                    }
+                                  />
+                                )}
                                 <span
                                   className={`text-[9px] font-black uppercase tracking-[0.15em] ${match.status === "live" ? "text-primary" : "text-slate-400"}`}
+                                  style={
+                                    isHighlight
+                                      ? {
+                                          color: highlightColor,
+                                        }
+                                      : {}
+                                  }
                                 >
                                   {match.stage}
                                 </span>
@@ -1301,15 +1345,20 @@ function StandingsView({
                               <th className="p-2 sm:p-4 text-[9px] font-black uppercase tracking-[0.2em] text-slate-400">
                                 {lang === "vi" ? "Đội / VĐV" : "Team / Player"}
                               </th>
-                              <th className="p-2 sm:p-4 text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 text-center w-12 sm:w-20">
-                                {t.played}
-                              </th>
-                              <th className="p-2 sm:p-4 text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 text-center w-12 sm:w-20">
-                                {t.difference}
-                              </th>
-                              <th className="p-2 sm:p-4 text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 text-center w-16 sm:w-24">
-                                {t.points}
-                              </th>
+                              {groupData.rankings?.[0]
+                                ?.enableTop3Badge ? null : (
+                                <>
+                                  <th className="p-2 sm:p-4 text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 text-center w-12 sm:w-20">
+                                    {t.played}
+                                  </th>
+                                  <th className="p-2 sm:p-4 text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 text-center w-12 sm:w-20">
+                                    {t.difference}
+                                  </th>
+                                  <th className="p-2 sm:p-4 text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 text-center w-16 sm:w-24">
+                                    {t.points}
+                                  </th>
+                                </>
+                              )}
                             </tr>
                           </thead>
                           <tbody>
@@ -1319,54 +1368,58 @@ function StandingsView({
                                 className="border-b border-slate-50 hover:bg-slate-50 transition-colors"
                               >
                                 <td className="p-2 sm:p-4 text-center">
-                                  {i === 0 ? (
+                                  {s.enableTop3Badge && s.ranking === 1 ? (
                                     <div className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-yellow-400/20 text-yellow-700 font-black text-xs sm:text-sm border border-yellow-400/30 select-none font-sans italic">
                                       1
                                     </div>
-                                  ) : i === 1 ? (
+                                  ) : s.enableTop3Badge && s.ranking === 2 ? (
                                     <div className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-slate-400/20 text-slate-600 font-black text-xs sm:text-sm border border-slate-400/30 select-none font-sans italic">
                                       2
                                     </div>
-                                  ) : i === 2 ? (
+                                  ) : s.enableTop3Badge && s.ranking === 3 ? (
                                     <div className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-orange-400/20 text-orange-700 font-black text-xs sm:text-sm border border-orange-400/30 select-none font-sans italic">
                                       3
                                     </div>
                                   ) : (
                                     <span className="font-bold text-slate-400 font-mono text-xs sm:text-sm">
-                                      {(i + 1).toString().padStart(2, "0")}
+                                      {String(s.ranking).padStart(2, "0")}
                                     </span>
                                   )}
                                 </td>
                                 <td className="p-2 sm:p-4 font-bold uppercase tracking-tight text-slate-700 text-xs sm:text-sm">
                                   {s.team}
                                 </td>
-                                <td className="p-2 sm:p-4 text-center font-bold text-slate-500">
-                                  {s.played}
-                                </td>
-                                <td className="p-2 sm:p-4 text-center font-bold text-slate-500 font-mono">
-                                  <span
-                                    className={
-                                      s.diff > 0
-                                        ? "text-green-600"
-                                        : s.diff < 0
-                                          ? "text-red-500"
-                                          : "text-slate-400 text-[10px] sm:text-xs"
-                                    }
-                                  >
-                                    {s.diff > 0 ? `+${s.diff}` : s.diff}
-                                  </span>
-                                </td>
-                                <td className="p-2 sm:p-4 text-center">
-                                  <span className="inline-flex items-center justify-center px-2 sm:px-3 py-1 bg-primary text-white font-black text-[10px] sm:text-xs italic tracking-tighter whitespace-nowrap">
-                                    {s.points}{" "}
-                                    <span className="hidden sm:inline ml-0.5">
-                                      {t.pts}
-                                    </span>
-                                    <span className="sm:hidden ml-0.5">
-                                      {lang === "vi" ? "Đ" : "P"}
-                                    </span>
-                                  </span>
-                                </td>
+                                {s.enableTop3Badge ? null : (
+                                  <>
+                                    <td className="p-2 sm:p-4 text-center font-bold text-slate-500">
+                                      {s.played}
+                                    </td>
+                                    <td className="p-2 sm:p-4 text-center font-bold text-slate-500 font-mono">
+                                      <span
+                                        className={
+                                          s.diff > 0
+                                            ? "text-green-600"
+                                            : s.diff < 0
+                                              ? "text-red-500"
+                                              : "text-slate-400 text-[10px] sm:text-xs"
+                                        }
+                                      >
+                                        {s.diff > 0 ? `+${s.diff}` : s.diff}
+                                      </span>
+                                    </td>
+                                    <td className="p-2 sm:p-4 text-center">
+                                      <span className="inline-flex items-center justify-center px-2 sm:px-3 py-1 bg-primary text-white font-black text-[10px] sm:text-xs italic tracking-tighter whitespace-nowrap">
+                                        {s.points}{" "}
+                                        <span className="hidden sm:inline ml-0.5">
+                                          {t.pts}
+                                        </span>
+                                        <span className="sm:hidden ml-0.5">
+                                          {lang === "vi" ? "Đ" : "P"}
+                                        </span>
+                                      </span>
+                                    </td>
+                                  </>
+                                )}
                               </tr>
                             ))}
                           </tbody>
@@ -1429,21 +1482,21 @@ function StandingsView({
                                 className="border-b border-slate-50 hover:bg-slate-50 transition-colors"
                               >
                                 <td className="p-2 sm:p-4 text-center">
-                                  {i === 0 ? (
+                                  {s.enableTop3Badge && s.ranking === 1 ? (
                                     <div className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-yellow-400/20 text-yellow-700 font-black text-xs sm:text-sm border border-yellow-400/30 select-none font-sans italic">
                                       1
                                     </div>
-                                  ) : i === 1 ? (
+                                  ) : s.enableTop3Badge && s.ranking === 2 ? (
                                     <div className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-slate-400/20 text-slate-600 font-black text-xs sm:text-sm border border-slate-400/30 select-none font-sans italic">
                                       2
                                     </div>
-                                  ) : i === 2 ? (
+                                  ) : s.enableTop3Badge && s.ranking === 3 ? (
                                     <div className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-orange-400/20 text-orange-700 font-black text-xs sm:text-sm border border-orange-400/30 select-none font-sans italic">
                                       3
                                     </div>
                                   ) : (
                                     <span className="font-bold text-slate-400 font-mono text-xs sm:text-sm">
-                                      {(i + 1).toString().padStart(2, "0")}
+                                      {String(s.ranking).padStart(2, "0")}
                                     </span>
                                   )}
                                 </td>

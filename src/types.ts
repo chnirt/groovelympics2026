@@ -48,6 +48,8 @@ export interface Match {
   timestamp: string;
   stage: string;
   participants: Participant[];
+  highlight: boolean;
+  highlightColor?: string;
 }
 
 export interface CountryMedal {
