@@ -50,6 +50,7 @@ export interface Match {
   participants: Participant[];
   highlight: boolean;
   highlightColor?: string;
+  prediction: boolean;
 }
 
 export interface CountryMedal {

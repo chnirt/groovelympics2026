@@ -4,6 +4,7 @@
  */
 
 import { useState, useMemo, FormEvent, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "motion/react";
 import {
   Trophy,
@@ -43,6 +44,7 @@ import { useBootstrap } from "./hooks/useBootstrap";
 import { get } from "lodash";
 import { useLocalStorage } from "./hooks/useLocalStorage";
 import { API_URL } from "./constants";
+import { getDeviceId } from "./utils/device";
 
 const ICON_MAP: Record<string, any> = {
   Trophy,
@@ -819,6 +821,7 @@ function ScheduleView({
     const targetGoalMin = isZeroZero ? "" : goalMinute;
 
     const newBet = {
+      deviceId: getDeviceId(),
       matchId: bettingMatch.id,
       match: `${bettingMatch.teamA} vs ${bettingMatch.teamB}`,
       name,
@@ -844,6 +847,15 @@ function ScheduleView({
         },
         body: JSON.stringify(newBet),
       });
+    } catch (err) {
+      console.error(err);
+    }
+
+    try {
+      localStorage.setItem(
+        "groovelympics_football_predictions",
+        JSON.stringify(updated),
+      );
     } catch (err) {
       console.error(err);
     }
@@ -929,11 +941,11 @@ function ScheduleView({
               ([date, dayMatches]) => (
                 <div key={date} className="relative">
                   {/* Date Header with Timeline Line */}
-                  <div className="sticky top-[-12px] sm:top-[-16px] lg:top-[-24px] z-20 py-2 mb-3 flex items-center bg-background-app/95 backdrop-blur-md">
+                  <div className="sticky -top-3 sm:-top-4 lg:-top-6 z-20 py-2 mb-3 flex items-center bg-background-app/95 backdrop-blur-md">
                     <div className="bg-slate-900 text-white px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-[0.2em] shadow-xl">
                       {date}
                     </div>
-                    <div className="flex-1 h-[1px] bg-slate-200 ml-4 opacity-30" />
+                    <div className="flex-1 h-px bg-slate-200 ml-4 opacity-30" />
                   </div>
 
                   <div className="grid grid-cols-1 gap-4 items-stretch">
@@ -950,10 +962,6 @@ function ScheduleView({
 
                       const isHighlight = match.highlight;
                       const highlightColor = match.highlightColor;
-
-                      const isChungKet =
-                        match.stage.includes("Chung Kết") ||
-                        match.stage.includes("Finals");
 
                       return (
                         <div
@@ -1201,55 +1209,72 @@ function ScheduleView({
                                       )}
 
                                       {/* Mobile Bet Button of Soccer Final */}
-                                      {match.sportId === 9 && isChungKet && (
-                                        <div className="w-full mt-3 shrink-0">
-                                          {myPredictions[match.id] && (
-                                            <div className="mb-2 p-3 bg-amber-500/10 border border-amber-500/20 rounded-sm text-center">
-                                              <p className="text-[9px] font-black uppercase text-amber-800 leading-none mb-1">
-                                                Dự đoán của bạn / Your
-                                                Prediction
-                                              </p>
-                                              <p className="text-[10px] font-black text-slate-800 uppercase tracking-tight">
-                                                {myPredictions[match.id].name} (
-                                                {myPredictions[match.id].bu})
-                                              </p>
-                                              <p className="text-[11px] font-mono font-black text-amber-600 mt-0.5">
-                                                TỈ SỐ:{" "}
-                                                {myPredictions[match.id].scoreA}{" "}
-                                                -{" "}
-                                                {myPredictions[match.id].scoreB}
-                                                {myPredictions[match.id]
-                                                  .goalMinute &&
-                                                  ` • PHÚT: ${myPredictions[match.id].goalMinute}'`}
-                                              </p>
-                                            </div>
-                                          )}
-                                          <button
-                                            onClick={() => handleOpenBet(match)}
-                                            className="w-full py-2 text-slate-950 text-[10px] font-black uppercase tracking-wider rounded-sm shadow-sm hover:shadow-md transition-all duration-300 flex items-center justify-center gap-1.5"
-                                            style={{
-                                              backgroundColor:
-                                                highlightColor + "10",
-                                              color: highlightColor,
-                                            }}
-                                          >
-                                            <Coins
-                                              size={11}
-                                              className="text-slate-950 animate-pulse"
-                                              color={highlightColor}
-                                            />
-                                            <span>
-                                              {myPredictions[match.id]
-                                                ? lang === "vi"
-                                                  ? "SỬA DỰ ĐOÁN"
-                                                  : "EDIT PREDICTION"
-                                                : lang === "vi"
-                                                  ? "DỰ ĐOÁN CÙNG CHAMPION"
-                                                  : "BET PREDICTION"}
-                                            </span>
-                                          </button>
-                                        </div>
-                                      )}
+                                      {match.sportId === 9 &&
+                                        match.prediction && (
+                                          <div className="w-full mt-3 shrink-0">
+                                            {myPredictions[match.id] && (
+                                              <div className="mb-2 p-3 bg-amber-500/10 border border-amber-500/20 rounded-sm text-center">
+                                                <p className="text-[9px] font-black uppercase text-amber-800 leading-none mb-1">
+                                                  {lang === "vi"
+                                                    ? "Dự đoán của bạn"
+                                                    : "Your Prediction"}
+                                                </p>
+                                                <p className="text-[10px] font-black text-slate-800 uppercase tracking-tight">
+                                                  {myPredictions[match.id].name}{" "}
+                                                  (
+                                                  {
+                                                    BU_OPTIONS.find(
+                                                      (buOption) =>
+                                                        buOption.value ===
+                                                        myPredictions[match.id]
+                                                          .bu,
+                                                    )?.label
+                                                  }
+                                                  )
+                                                </p>
+                                                <p className="text-[11px] font-mono font-black text-amber-600 mt-0.5">
+                                                  TỈ SỐ:{" "}
+                                                  {
+                                                    myPredictions[match.id]
+                                                      .scoreA
+                                                  }{" "}
+                                                  -{" "}
+                                                  {
+                                                    myPredictions[match.id]
+                                                      .scoreB
+                                                  }
+                                                </p>
+                                                <p className="text-[11px] font-mono font-black text-amber-600 mt-0.5">
+                                                  {`PHÚT: ${myPredictions[match.id].goalMinute}`}
+                                                </p>
+                                              </div>
+                                            )}
+                                            {myPredictions[match.id] ? null : (
+                                              <button
+                                                onClick={() =>
+                                                  handleOpenBet(match)
+                                                }
+                                                className="w-full py-2 text-slate-950 text-[10px] font-black uppercase tracking-wider rounded-sm shadow-sm hover:shadow-md transition-all duration-300 flex items-center justify-center gap-1.5"
+                                                style={{
+                                                  backgroundColor:
+                                                    highlightColor + "10",
+                                                  color: highlightColor,
+                                                }}
+                                              >
+                                                <Coins
+                                                  size={11}
+                                                  className="text-slate-950 animate-pulse"
+                                                  color={highlightColor}
+                                                />
+                                                <span>
+                                                  {lang === "vi"
+                                                    ? "DỰ ĐOÁN CÙNG CHAMPION"
+                                                    : "BET PREDICTION"}
+                                                </span>
+                                              </button>
+                                            )}
+                                          </div>
+                                        )}
                                     </div>
                                   </div>
 
@@ -1344,48 +1369,56 @@ function ScheduleView({
                               </div>
 
                               {/* Desktop Bet Button of Soccer Final */}
-                              {match.sportId === 9 && isChungKet && (
+                              {match.sportId === 9 && match.prediction && (
                                 <div className="mt-2 pt-4 w-full shrink-0">
                                   {myPredictions[match.id] && (
                                     <div className="mb-2.5 p-2 bg-amber-500/10 border border-amber-500/20 text-slate-800 rounded-sm">
                                       <p className="text-[8px] font-black uppercase text-amber-800 leading-none mb-1">
-                                        Dự đoán / Your Prediction
+                                        {lang === "vi"
+                                          ? "Dự đoán của bạn"
+                                          : "Your Prediction"}
                                       </p>
                                       <p className="text-[9px] font-black text-slate-800 truncate">
                                         {myPredictions[match.id].name} (
-                                        {myPredictions[match.id].bu})
+                                        {
+                                          BU_OPTIONS.find(
+                                            (buOption) =>
+                                              buOption.value ===
+                                              myPredictions[match.id].bu,
+                                          )?.label
+                                        }
+                                        )
                                       </p>
                                       <p className="text-[10px] font-mono font-black text-slate-900 mt-1 uppercase tracking-tight">
                                         Tỉ số: {myPredictions[match.id].scoreA}{" "}
                                         - {myPredictions[match.id].scoreB}
-                                        {myPredictions[match.id].goalMinute &&
-                                          ` • Phút: ${myPredictions[match.id].goalMinute}'`}
+                                      </p>
+                                      <p className="text-[10px] font-mono font-black text-slate-900 mt-1 uppercase tracking-tight">
+                                        {`Phút: ${myPredictions[match.id].goalMinute}'`}
                                       </p>
                                     </div>
                                   )}
-                                  <button
-                                    onClick={() => handleOpenBet(match)}
-                                    className="w-full py-2 text-slate-950 text-[10px] font-black uppercase tracking-wider rounded-sm shadow-md hover:shadow-lg transition-all duration-300 flex items-center justify-center gap-1.5"
-                                    style={{
-                                      backgroundColor: highlightColor + "10",
-                                      color: highlightColor,
-                                    }}
-                                  >
-                                    <Coins
-                                      size={12}
-                                      className="text-slate-950 animate-pulse"
-                                      color={highlightColor}
-                                    />
-                                    <span>
-                                      {myPredictions[match.id]
-                                        ? lang === "vi"
-                                          ? "SỬA DỰ ĐOÁN"
-                                          : "EDIT PREDICTION"
-                                        : lang === "vi"
+                                  {myPredictions[match.id] ? null : (
+                                    <button
+                                      onClick={() => handleOpenBet(match)}
+                                      className="w-full py-2 text-slate-950 text-[10px] font-black uppercase tracking-wider rounded-sm shadow-md hover:shadow-lg transition-all duration-300 flex items-center justify-center gap-1.5"
+                                      style={{
+                                        backgroundColor: highlightColor + "10",
+                                        color: highlightColor,
+                                      }}
+                                    >
+                                      <Coins
+                                        size={12}
+                                        className="text-slate-950 animate-pulse"
+                                        color={highlightColor}
+                                      />
+                                      <span>
+                                        {lang === "vi"
                                           ? "DỰ ĐOÁN TỈ SỐ"
                                           : "PREDICT SCORE"}
-                                    </span>
-                                  </button>
+                                      </span>
+                                    </button>
+                                  )}
                                 </div>
                               )}
                             </div>
@@ -1413,309 +1446,333 @@ function ScheduleView({
       </AnimatePresence>
 
       {/* Soccer Finals Prediction Modal */}
-      <AnimatePresence>
-        {bettingMatch && (
-          <>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setBettingMatch(null)}
-              className="fixed inset-0 z-100 bg-black/60 backdrop-blur-sm"
-              id="bet-modal-overlay"
-            />
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              transition={{ type: "spring", damping: 25, stiffness: 250 }}
-              className="fixed inset-x-4 bottom-4 top-4 sm:inset-auto sm:left-1/2 sm:top-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 z-[110] w-full max-w-md bg-white border border-slate-200 shadow-2xl rounded-sm flex flex-col overflow-hidden"
-              id="bet-modal-container"
-            >
-              {/* Header */}
-              <div className="bg-slate-950 text-white p-5 flex justify-between items-center border-b border-amber-500/20">
-                <div className="flex items-center gap-3">
-                  <div
-                    className="w-8 h-8 rounded-sm flex items-center justify-center text-slate-950"
-                    style={{
-                      backgroundColor: bettingMatch.highlightColor,
-                      color: "#ffffff",
-                    }}
+      {typeof document !== "undefined" &&
+        createPortal(
+          <AnimatePresence>
+            {bettingMatch && (
+              <>
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  onClick={() => setBettingMatch(null)}
+                  className="fixed inset-0 z-120 bg-black/60 backdrop-blur-sm"
+                  id="bet-modal-overlay"
+                />
+                <div className="fixed inset-0 z-130 flex items-center justify-center p-4 pointer-events-none">
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.95, y: 15 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.95, y: 15 }}
+                    transition={{ type: "spring", damping: 25, stiffness: 250 }}
+                    className="pointer-events-auto w-full max-w-md max-h-[85vh] bg-white border border-slate-200 shadow-2xl rounded-sm flex flex-col overflow-hidden"
+                    id="bet-modal-container"
                   >
-                    <Coins size={16} />
-                  </div>
-                  <div>
-                    <h3
-                      className="text-xs font-black uppercase tracking-wider"
-                      style={{
-                        color: bettingMatch.highlightColor,
-                      }}
-                    >
-                      {lang === "vi"
-                        ? "DỰ ĐOÁN VÒNG CHUNG KẾT"
-                        : "FINALS PREDICTION"}
-                    </h3>
-                    <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest leading-none mt-1">
-                      {bettingMatch.teamA} vs {bettingMatch.teamB}
-                    </p>
-                  </div>
-                </div>
-                <button
-                  onClick={() => !isSubmitting && setBettingMatch(null)}
-                  disabled={isSubmitting}
-                  className="p-1 rounded-full text-slate-400 hover:text-white hover:bg-white/10 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
-                >
-                  <X size={18} />
-                </button>
-              </div>
-
-              {/* Form Body */}
-              <form
-                onSubmit={handleFormSubmit}
-                className="flex-1 overflow-y-auto p-6 space-y-5 custom-scrollbar"
-              >
-                {/* 1. Name Input */}
-                <div>
-                  <label className="block text-[10px] font-black uppercase tracking-wider text-slate-400 mb-1">
-                    {lang === "vi" ? "Họ và tên *" : "Full Name *"}
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    maxLength={50}
-                    disabled={isSubmitting}
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder={
-                      lang === "vi" ? "Nhập họ và tên..." : "Enter your name..."
-                    }
-                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none text-xs font-bold transition-all text-slate-800 disabled:opacity-60 disabled:cursor-not-allowed"
-                  />
-                </div>
-
-                {/* 2. BU Dropdown */}
-                <div>
-                  <label className="block text-[10px] font-black uppercase tracking-wider text-slate-400 mb-1">
-                    {lang === "vi"
-                      ? "Đơn vị (Business Unit) *"
-                      : "Business Unit (BU) *"}
-                  </label>
-                  <select
-                    required
-                    disabled={isSubmitting}
-                    onChange={(e) => setBu(e.target.value)}
-                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none text-xs font-bold transition-all text-slate-800 disabled:opacity-60 disabled:cursor-not-allowed"
-                  >
-                    <option value="" disabled>
-                      {lang === "vi" ? "-- Chọn đơn vị --" : "-- Select BU --"}
-                    </option>
-                    {BU_OPTIONS.map((opt) => (
-                      <option key={opt.value} value={opt.value}>
-                        {opt.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="h-px bg-slate-100 my-4" />
-
-                {/* 3. Question 1: Score Prediction */}
-                <div>
-                  <span className="block text-[10px] font-black uppercase tracking-wider text-slate-400 mb-2">
-                    {lang === "vi"
-                      ? "Câu hỏi 1: Tỷ số chung cuộc *"
-                      : "Question 1: Final Score *"}
-                  </span>
-
-                  <div className="bg-slate-50 p-4 border border-slate-200/60 rounded-sm">
-                    <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-3">
-                      <div className="text-right">
-                        <span
-                          className="block text-[11px] font-black uppercase tracking-tight text-slate-800 leading-none truncate max-w-[125px]"
-                          title={bettingMatch.teamA}
-                        >
-                          {bettingMatch.teamA}
-                        </span>
-                        <span className="text-[7px] font-bold text-slate-400 uppercase tracking-widest">
-                          {lang === "vi" ? "Đội nhà" : "Home"}
-                        </span>
-                      </div>
-
-                      <div className="flex items-center gap-2">
-                        <input
-                          type="number"
-                          min="0"
-                          max="99"
-                          required
-                          value={scoreA}
-                          disabled={isSubmitting}
-                          onChange={(e) => {
-                            const val = e.target.value;
-                            setScoreA(val);
-                            // Auto skip goalMinute if 0-0
-                            if (val === "0" && scoreB === "0") {
-                              setGoalMinute("");
-                            }
+                    {/* Header */}
+                    <div className="bg-slate-950 text-white p-5 flex justify-between items-center border-b border-amber-500/20">
+                      <div className="flex items-center gap-3">
+                        <div
+                          className="w-8 h-8 rounded-sm flex items-center justify-center text-slate-950"
+                          style={{
+                            backgroundColor: bettingMatch.highlightColor,
+                            color: "#ffffff",
                           }}
-                          placeholder="0"
-                          className="w-12 h-10 text-center font-mono font-black text-lg bg-white border border-slate-200 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none rounded-sm text-slate-800 disabled:opacity-60 disabled:cursor-not-allowed"
-                        />
-                        <span className="font-bold text-slate-400">:</span>
-                        <input
-                          type="number"
-                          min="0"
-                          max="99"
-                          required
-                          value={scoreB}
-                          disabled={isSubmitting}
-                          onChange={(e) => {
-                            const val = e.target.value;
-                            setScoreB(val);
-                            // Auto skip goalMinute if 0-0
-                            if (val === "0" && scoreA === "0") {
-                              setGoalMinute("");
-                            }
-                          }}
-                          placeholder="0"
-                          className="w-12 h-10 text-center font-mono font-black text-lg bg-white border border-slate-200 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none rounded-sm text-slate-800"
-                        />
-                      </div>
-
-                      <div className="text-left">
-                        <span
-                          className="block text-[11px] font-black uppercase tracking-tight text-slate-800 leading-none truncate max-w-[125px]"
-                          title={bettingMatch.teamB}
                         >
-                          {bettingMatch.teamB}
-                        </span>
-                        <span className="text-[7px] font-bold text-slate-400 uppercase tracking-widest">
-                          {lang === "vi" ? "Khách" : "Away"}
-                        </span>
+                          <Coins size={16} />
+                        </div>
+                        <div>
+                          <h3
+                            className="text-xs font-black uppercase tracking-wider"
+                            style={{
+                              color: bettingMatch.highlightColor,
+                            }}
+                          >
+                            {lang === "vi"
+                              ? "DỰ ĐOÁN VÒNG CHUNG KẾT"
+                              : "FINALS PREDICTION"}
+                          </h3>
+                          <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest leading-none mt-1">
+                            {bettingMatch.teamA} vs {bettingMatch.teamB}
+                          </p>
+                        </div>
                       </div>
+                      <button
+                        onClick={() => !isSubmitting && setBettingMatch(null)}
+                        disabled={isSubmitting}
+                        className="p-1 rounded-full text-slate-400 hover:text-white hover:bg-white/10 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                      >
+                        <X size={18} />
+                      </button>
                     </div>
-                  </div>
-                </div>
 
-                {/* 4. Question 2: Minute of first goal scored */}
-                <div className="transition-all duration-300">
-                  {scoreA === "0" && scoreB === "0" ? (
-                    <motion.div
-                      key="no-minute-warning"
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: "auto" }}
-                      className="p-3 bg-amber-500/10 border border-amber-500/20 text-amber-800 rounded-sm text-center text-[10px] font-bold uppercase tracking-wide leading-relaxed"
+                    {/* Form Body */}
+                    <form
+                      onSubmit={handleFormSubmit}
+                      className="flex-1 overflow-y-auto p-6 space-y-5 custom-scrollbar"
                     >
-                      {lang === "vi"
-                        ? "✨ Bỏ qua Câu hỏi 2 (Phút ghi bàn) vì bạn vừa dự đoán tỉ số 0-0"
-                        : "✨ Question 2 (Goal minute) skipped as you predicted a 0-0 score"}
-                    </motion.div>
-                  ) : (
-                    <motion.div
-                      key="minute-input-wrapper"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      className="space-y-1.5"
-                    >
-                      <label className="block text-[10px] font-black uppercase tracking-wider text-slate-400">
-                        {lang === "vi"
-                          ? "Câu hỏi 2: Ghi bàn thắng ở phút thứ mấy? *"
-                          : "Question 2: First Goal Minute? *"}
-                      </label>
-                      <div className="relative">
+                      {/* 1. Name Input */}
+                      <div>
+                        <label className="block text-[10px] font-black uppercase tracking-wider text-slate-400 mb-1">
+                          {lang === "vi" ? "Họ và tên *" : "Full Name *"}
+                        </label>
                         <input
-                          type="number"
-                          min="1"
-                          max="120"
-                          required={!(scoreA === "0" && scoreB === "0")}
-                          value={goalMinute}
+                          type="text"
+                          required
+                          maxLength={50}
+                          value={name}
                           disabled={isSubmitting}
-                          onChange={(e) => setGoalMinute(e.target.value)}
+                          onChange={(e) => setName(e.target.value)}
                           placeholder={
                             lang === "vi"
-                              ? "Ví dụ: 25, 68..."
-                              : "e.g. 25, 68..."
+                              ? "Nhập họ và tên..."
+                              : "Enter your name..."
                           }
-                          className="w-full pl-3 pr-16 py-2 bg-slate-50 border border-slate-200 rounded-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none text-xs font-bold transition-all font-mono text-slate-800 disabled:opacity-60 disabled:cursor-not-allowed"
+                          className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none text-xs font-bold transition-all text-slate-800 disabled:opacity-60 disabled:cursor-not-allowed"
                         />
-                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[9px] font-black text-slate-400 uppercase tracking-wider">
-                          {lang === "vi" ? "Phút thứ" : "Minute"}
-                        </span>
                       </div>
-                      <p className="text-[9px] font-bold text-slate-400 leading-tight">
-                        {lang === "vi"
-                          ? "* Dự đoán phút của bàn thắng đầu tiên xuất hiện trong trận đấu."
-                          : "* Predict the minute when the first goal is scored in the match."}
-                      </p>
-                    </motion.div>
-                  )}
-                </div>
 
-                {/* Footer Buttons */}
-                <div className="flex gap-2.5 pt-4">
-                  <button
-                    type="button"
-                    disabled={isSubmitting}
-                    onClick={() => setBettingMatch(null)}
-                    className="flex-1 py-3 border border-slate-200 text-slate-500 hover:text-slate-800 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed text-[10px] font-black uppercase tracking-widest rounded-sm transition-all"
-                  >
-                    {lang === "vi" ? "HỦY BỎ" : "CANCEL"}
-                  </button>
-                  <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="flex-1 py-3 disabled:bg-yellow-500/50 disabled:cursor-not-allowed text-slate-950 text-[10px] font-black uppercase tracking-widest rounded-sm transition-all shadow-sm flex items-center justify-center gap-2"
-                    style={{
-                      backgroundColor: bettingMatch.highlightColor,
-                      color: "#ffffff",
-                    }}
-                  >
-                    {isSubmitting ? (
-                      <>
-                        <Loader2
-                          size={12}
-                          className="animate-spin text-slate-950"
-                          color="#ffffff"
-                        />
-                        <span>
-                          {lang === "vi" ? "ĐANG GỬI..." : "SUBMITTING..."}
+                      {/* 2. BU Dropdown */}
+                      <div>
+                        <label className="block text-[10px] font-black uppercase tracking-wider text-slate-400 mb-1">
+                          {lang === "vi"
+                            ? "Đơn vị (Business Unit) *"
+                            : "Business Unit (BU) *"}
+                        </label>
+                        <select
+                          required
+                          value={bu}
+                          disabled={isSubmitting}
+                          onChange={(e) => setBu(e.target.value)}
+                          className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none text-xs font-bold transition-all text-slate-800 disabled:opacity-60 disabled:cursor-not-allowed"
+                        >
+                          <option value="" disabled>
+                            {lang === "vi"
+                              ? "-- Chọn đơn vị --"
+                              : "-- Select BU --"}
+                          </option>
+                          {BU_OPTIONS.map((opt) => (
+                            <option key={opt.value} value={opt.value}>
+                              {opt.label}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+
+                      <div className="h-px bg-slate-100 my-4" />
+
+                      {/* 3. Question 1: Score Prediction */}
+                      <div>
+                        <span className="block text-[10px] font-black uppercase tracking-wider text-slate-400 mb-2">
+                          {lang === "vi"
+                            ? "Câu hỏi 1: Tỷ số chung cuộc *"
+                            : "Question 1: Final Score *"}
                         </span>
-                      </>
-                    ) : (
-                      <span>{lang === "vi" ? "GỬI DỰ ĐOÁN" : "SUBMIT"}</span>
-                    )}
-                  </button>
+
+                        <div className="bg-slate-50 p-4 border border-slate-200/60 rounded-sm">
+                          <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-3">
+                            <div className="text-right">
+                              <span
+                                className="block text-[11px] font-black uppercase tracking-tight text-slate-800 leading-none truncate max-w-[125px]"
+                                title={bettingMatch.teamA}
+                              >
+                                {bettingMatch.teamA}
+                              </span>
+                              <span className="text-[7px] font-bold text-slate-400 uppercase tracking-widest">
+                                {/* {lang === "vi" ? "Đội nhà" : "Home"} */}
+                                {bettingMatch.countryA}
+                              </span>
+                            </div>
+
+                            <div className="flex items-center gap-2">
+                              <input
+                                type="number"
+                                min="0"
+                                max="99"
+                                required
+                                value={scoreA}
+                                disabled={isSubmitting}
+                                onChange={(e) => {
+                                  const val = e.target.value;
+                                  setScoreA(val);
+                                  // Auto skip goalMinute if 0-0
+                                  if (val === "0" && scoreB === "0") {
+                                    setGoalMinute("");
+                                  }
+                                }}
+                                placeholder="0"
+                                className="w-12 h-10 text-center font-mono font-black text-lg bg-white border border-slate-200 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none rounded-sm text-slate-800 disabled:opacity-60 disabled:cursor-not-allowed"
+                              />
+                              <span className="font-bold text-slate-400">
+                                :
+                              </span>
+                              <input
+                                type="number"
+                                min="0"
+                                max="99"
+                                required
+                                value={scoreB}
+                                disabled={isSubmitting}
+                                onChange={(e) => {
+                                  const val = e.target.value;
+                                  setScoreB(val);
+                                  // Auto skip goalMinute if 0-0
+                                  if (val === "0" && scoreA === "0") {
+                                    setGoalMinute("");
+                                  }
+                                }}
+                                placeholder="0"
+                                className="w-12 h-10 text-center font-mono font-black text-lg bg-white border border-slate-200 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none rounded-sm text-slate-800"
+                              />
+                            </div>
+
+                            <div className="text-left">
+                              <span
+                                className="block text-[11px] font-black uppercase tracking-tight text-slate-800 leading-none truncate max-w-[125px]"
+                                title={bettingMatch.teamB}
+                              >
+                                {bettingMatch.teamB}
+                              </span>
+                              <span className="text-[7px] font-bold text-slate-400 uppercase tracking-widest">
+                                {/* {lang === "vi" ? "Khách" : "Away"} */}
+                                {bettingMatch.countryB}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* 4. Question 2: Minute of first goal scored */}
+                      <div className="transition-all duration-300">
+                        {scoreA === "0" && scoreB === "0" ? (
+                          <motion.div
+                            key="no-minute-warning"
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: "auto" }}
+                            className="p-3 bg-amber-500/10 border border-amber-500/20 text-amber-800 rounded-sm text-center text-[10px] font-bold uppercase tracking-wide leading-relaxed"
+                          >
+                            {lang === "vi"
+                              ? "✨ Bỏ qua Câu hỏi 2 (Phút ghi bàn) vì bạn vừa dự đoán tỉ số 0-0"
+                              : "✨ Question 2 (Goal minute) skipped as you predicted a 0-0 score"}
+                          </motion.div>
+                        ) : (
+                          <motion.div
+                            key="minute-input-wrapper"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            className="space-y-1.5"
+                          >
+                            <label className="block text-[10px] font-black uppercase tracking-wider text-slate-400">
+                              {lang === "vi"
+                                ? "Câu hỏi 2: Ghi bàn thắng ở phút thứ mấy? *"
+                                : "Question 2: First Goal Minute? *"}
+                            </label>
+                            <div className="relative">
+                              <input
+                                type="number"
+                                min="1"
+                                max="120"
+                                required={!(scoreA === "0" && scoreB === "0")}
+                                value={goalMinute}
+                                disabled={isSubmitting}
+                                onChange={(e) => setGoalMinute(e.target.value)}
+                                placeholder={
+                                  lang === "vi"
+                                    ? "Ví dụ: 25, 68..."
+                                    : "e.g. 25, 68..."
+                                }
+                                className="w-full pl-3 pr-16 py-2 bg-slate-50 border border-slate-200 rounded-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none text-xs font-bold transition-all font-mono text-slate-800 disabled:opacity-60 disabled:cursor-not-allowed"
+                              />
+                              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[9px] font-black text-slate-400 uppercase tracking-wider">
+                                {lang === "vi" ? "Phút thứ" : "Minute"}
+                              </span>
+                            </div>
+                            <p className="text-[9px] font-bold text-slate-400 leading-tight">
+                              {lang === "vi"
+                                ? "* Dự đoán phút của bàn thắng đầu tiên xuất hiện trong trận đấu."
+                                : "* Predict the minute when the first goal is scored in the match."}
+                            </p>
+                          </motion.div>
+                        )}
+                      </div>
+
+                      {/* Footer Buttons */}
+                      <div className="flex gap-2.5 pt-4">
+                        <button
+                          type="button"
+                          disabled={isSubmitting}
+                          onClick={() => setBettingMatch(null)}
+                          className="flex-1 py-3 border border-slate-200 text-slate-500 hover:text-slate-800 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed text-[10px] font-black uppercase tracking-widest rounded-sm transition-all"
+                        >
+                          {lang === "vi" ? "HỦY BỎ" : "CANCEL"}
+                        </button>
+                        <button
+                          type="submit"
+                          disabled={isSubmitting}
+                          className="flex-1 py-3 disabled:bg-yellow-500/50 disabled:cursor-not-allowed text-slate-950 text-[10px] font-black uppercase tracking-widest rounded-sm transition-all shadow-sm flex items-center justify-center gap-2"
+                          style={{
+                            backgroundColor: bettingMatch.highlightColor,
+                            color: "#ffffff",
+                          }}
+                        >
+                          {isSubmitting ? (
+                            <>
+                              <Loader2
+                                size={12}
+                                className="animate-spin text-slate-950"
+                                color="#ffffff"
+                              />
+                              <span>
+                                {lang === "vi"
+                                  ? "ĐANG GỬI..."
+                                  : "SUBMITTING..."}
+                              </span>
+                            </>
+                          ) : (
+                            <span>
+                              {lang === "vi" ? "GỬI DỰ ĐOÁN" : "SUBMIT"}
+                            </span>
+                          )}
+                        </button>
+                      </div>
+                    </form>
+                  </motion.div>
                 </div>
-              </form>
-            </motion.div>
-          </>
+              </>
+            )}
+          </AnimatePresence>,
+          document.body,
         )}
-      </AnimatePresence>
 
       {/* Floating Success Toast */}
-      <AnimatePresence>
-        {successToast && (
-          <motion.div
-            initial={{ opacity: 0, y: 50, x: "-50%" }}
-            animate={{ opacity: 1, y: 0, x: "-50%" }}
-            exit={{ opacity: 0, y: 20, x: "-50%" }}
-            className="fixed bottom-6 left-1/2 z-150 bg-slate-900 border border-amber-400/30 text-white px-5 py-3 rounded-sm shadow-2xl flex items-center gap-3 w-fit max-w-sm pointer-events-auto"
-          >
-            <div className="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center shrink-0">
-              <CheckCircle2
-                size={14}
-                className="text-amber-400 fill-transparent"
-              />
-            </div>
-            <div>
-              <p className="text-[10px] font-black uppercase tracking-wider text-amber-400 leading-none mb-0.5">
-                Success
-              </p>
-              <p className="text-[11px] font-bold text-slate-200 leading-tight">
-                {successToast.message}
-              </p>
-            </div>
-          </motion.div>
+      {typeof document !== "undefined" &&
+        createPortal(
+          <AnimatePresence>
+            {successToast && (
+              <motion.div
+                initial={{ opacity: 0, y: 50, x: "-50%" }}
+                animate={{ opacity: 1, y: 0, x: "-50%" }}
+                exit={{ opacity: 0, y: 20, x: "-50%" }}
+                className="fixed bottom-6 left-1/2 z-150 bg-slate-900 border border-amber-400/30 text-white px-5 py-3 rounded-sm shadow-2xl flex items-center gap-3 w-fit max-w-sm pointer-events-auto"
+              >
+                <div className="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center shrink-0">
+                  <CheckCircle2
+                    size={14}
+                    className="text-amber-400 fill-transparent"
+                  />
+                </div>
+                <div>
+                  <p className="text-[10px] font-black uppercase tracking-wider text-amber-400 leading-none mb-0.5">
+                    Success
+                  </p>
+                  <p className="text-[11px] font-bold text-slate-200 leading-tight">
+                    {successToast.message}
+                  </p>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>,
+          document.body,
         )}
-      </AnimatePresence>
     </div>
   );
 }
