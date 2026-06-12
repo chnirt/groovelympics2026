@@ -1564,8 +1564,8 @@ function ScheduleView({
                       <div>
                         <span className="block text-[10px] font-black uppercase tracking-wider text-slate-400 mb-2">
                           {lang === "vi"
-                            ? "Câu hỏi 1: Tỷ số chung cuộc *"
-                            : "Question 1: Final Score *"}
+                            ? "Tỷ số chung cuộc *"
+                            : "Final Score *"}
                         </span>
 
                         <div className="bg-slate-50 p-4 border border-slate-200/60 rounded-sm">
@@ -1651,8 +1651,8 @@ function ScheduleView({
                             className="p-3 bg-amber-500/10 border border-amber-500/20 text-amber-800 rounded-sm text-center text-[10px] font-bold uppercase tracking-wide leading-relaxed"
                           >
                             {lang === "vi"
-                              ? "✨ Bỏ qua Câu hỏi 2 (Phút ghi bàn) vì bạn vừa dự đoán tỉ số 0-0"
-                              : "✨ Question 2 (Goal minute) skipped as you predicted a 0-0 score"}
+                              ? "✨ Bỏ qua Câu hỏi (Bàn thắng đầu tiên được ghi ở phút thứ mấy?) vì bạn vừa dự đoán tỉ số 0-0"
+                              : "✨ Skip the question (‘What minute is the first goal scored?’) because you predicted a 0–0 score"}
                           </motion.div>
                         ) : (
                           <motion.div
@@ -1663,8 +1663,8 @@ function ScheduleView({
                           >
                             <label className="block text-[10px] font-black uppercase tracking-wider text-slate-400">
                               {lang === "vi"
-                                ? "Câu hỏi 2: Ghi bàn thắng ở phút thứ mấy? *"
-                                : "Question 2: First Goal Minute? *"}
+                                ? "Bàn thắng đầu tiên được ghi ở phút thứ mấy? *"
+                                : "What minute is the first goal scored? *"}
                             </label>
                             <div className="relative">
                               <input
@@ -1688,8 +1688,8 @@ function ScheduleView({
                             </div>
                             <p className="text-[9px] font-bold text-slate-400 leading-tight">
                               {lang === "vi"
-                                ? "* Dự đoán phút của bàn thắng đầu tiên xuất hiện trong trận đấu."
-                                : "* Predict the minute when the first goal is scored in the match."}
+                                ? "* Thời gian ghi bàn được xác định theo đồng hồ của trọng tài."
+                                : "* Goal timing is determined according to the referee’s clock."}
                             </p>
                           </motion.div>
                         )}
